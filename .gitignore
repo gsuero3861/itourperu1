@@ -39,7 +39,7 @@ local.properties
 *.g.h
 *.g.hpp
 *.g.cpp
-*.cvxproj
+*.vcxproj
 *.filters
 *.pfx
 *.sln
