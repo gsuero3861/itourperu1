@@ -8,7 +8,14 @@
     mc:Ignorable="d">
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
-
+        
+        <Grid Width="200" Height="200" Background="AliceBlue" HorizontalAlignment="Left">
+            <Grid.RenderTransform>
+                <CompositeTransform CenterX="100" CenterY="100"
+                                    ScaleX="3.0" ScaleY="1.0"
+                                    TranslateX="583"></CompositeTransform>
+            </Grid.RenderTransform>
+        </Grid>
     </Grid>
 </Page>
 

@@ -16,6 +16,7 @@ using namespace Windows::UI::Xaml::Navigation;
 
 IStackItem::IStackItem()
 {
+	Canvas::SetZIndex(this, 1);
 	inititemcontent();
 	initprivatemethodsandvariables();
 }

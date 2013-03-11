@@ -54,6 +54,12 @@ namespace IControls
 				float64 get(){ return this->_initialangle ;}
 			}
 
+			property int32 ZIndex
+			{
+				void set(int32 value){ Windows::UI::Xaml::Controls::Canvas::SetZIndex(this , value ); }
+				int32 get(){ return 0 ; }
+			}
+
 
 		private:
 			float64 _itemwidth, _itemheight ;
