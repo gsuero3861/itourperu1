@@ -23,7 +23,22 @@ using namespace Windows::UI::Xaml::Navigation;
 
 MainPage::MainPage()
 {
-	InitializeComponent(); 
+	InitializeComponent();  
+	_paths = ref new Platform::Collections::Vector<Platform::String^>();
+	for (int i = 0; i < 16; i++)
+	{
+		_paths->Append("ms-appx:///images/img"+ i +".jpg");
+	}
+
+	stackscroll1->ItemsList = _paths ;
+
+	stack1->ItemContentHeight = 300 ;
+	stack1->ItemContentWidth = 400 ;
+	stack1->ItemHeight = 300 ;
+	stack1->ItemWidth = 460 ;
+	stack1->StackWidth = 800 ;
+	stack1->ItemsList = _paths ;	
+	/** to test stackscroll1
 	Grid ^ a = ref new Grid();
 	a->Background = ref new SolidColorBrush(Windows::UI::Colors::Aqua);
 	a->Height =500 ;
@@ -43,7 +58,7 @@ MainPage::MainPage()
 	stackscroll1->additem(a);
 	stackscroll1->additem(b);
 	stackscroll1->additem(c);
-	stackscroll1->additem(d);
+	stackscroll1->additem(d); */
 }
 
 /// <summary>

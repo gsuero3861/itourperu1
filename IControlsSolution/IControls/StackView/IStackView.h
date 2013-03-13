@@ -33,6 +33,9 @@ namespace IControls
 
 		private:
 			Windows::UI::Xaml::Controls::Grid ^ _itemsgrid ;
+			Windows::UI::Xaml::Controls::StackPanel^ _itemspanel ;
+			Windows::UI::Xaml::Controls::Grid^ _begingrid ;
+			Windows::UI::Xaml::Controls::Grid^ _endgrid ;
 			void initcontrols();
 #pragma endregion
 
@@ -47,7 +50,12 @@ namespace IControls
 
 			property float64 ItemWidth
 			{
-				void set(float64 value){ this->_itemwidth = value ; }
+				void set(float64 value)
+				{
+					this->_itemwidth = value ; 
+					//this->_begingrid->Width = (_stackwidth - this->_itemwidth) / 2 ;
+					//this->_endgrid->Width = (_stackwidth - this->_itemwidth) / 2 ;
+				}
 				float64 get(){ return this->_itemwidth; }
 			}
 
@@ -81,7 +89,31 @@ namespace IControls
 				int32 get(){ return this->_selecteditem  ;}
 			}
 
+			property float64 StackWidth
+			{
+				void set(float64 value)
+				{
+					this->_stackwidth = value ;
+					this->_begingrid->Width = (_stackwidth - this->_itemwidth) / 2 ;
+					this->_endgrid->Width = (_stackwidth - this->_itemwidth) / 2 ;
+				}
+				float64 get(){return this->_stackwidth;}
+			}
+
+			property float64 CurrentWidth
+			{
+				void set(float64 value){ this->_currentwidth = value ;}
+				float64 get()
+				{
+					if(this->_stackviewstate == StackViewState::Open)
+						return  this->StackWidth+ this->_itemwidth * (this->_numberofitems - 1 );
+					else
+						return  this->_stackwidth ;
+				}
+			}
+
 		private: 
+			float64 _stackwidth, _currentwidth ;
 			float64 _itemwidth, _itemheight ;
 			float64 _itemcontentwidth , _itemcontentheight ;
 			int32 _selecteditem ;
@@ -160,6 +192,8 @@ namespace IControls
 			void ItemsGrid_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
 			void ItemsGrid_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 			void ItemsGrid_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+
+			void StackItemSelected_1(Platform::Object ^ sender , int32 _currentitem);
 
 #pragma endregion
 

@@ -1,6 +1,7 @@
 #include "pch.h"
 
 using namespace IControls;
+using namespace IControls::StackView;
 
 using namespace Platform;
 using namespace Windows::Foundation;
@@ -164,6 +165,25 @@ void IStackScroll::initprivateproperties()
 
 #pragma endregion
 
+#pragma region Stack Scroll Temporal Data Load
+ 
+void IStackScroll::loaditems()
+{
+	for (int i = 0; i < 5; i++)
+	{
+		IStackView^ tmpstack = ref new IStackView();
+		tmpstack->ItemContentHeight = 300 ;
+		tmpstack->ItemContentWidth = 400 ;
+		tmpstack->ItemHeight = 300 ;
+		tmpstack->ItemWidth = 460 ;
+		tmpstack->StackWidth = 800 ;
+		tmpstack->ItemsList = _itemslist ;	
+		this->_panelstacks->Children->Append(tmpstack);
+	}
+	
+}
+
+#pragma endregion
 
 
 #pragma region Pointer Pressed Functions

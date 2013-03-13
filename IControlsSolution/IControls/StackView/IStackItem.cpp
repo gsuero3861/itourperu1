@@ -16,9 +16,13 @@ using namespace Windows::UI::Xaml::Navigation;
 
 IStackItem::IStackItem()
 {
+	this->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Left ;
 	Canvas::SetZIndex(this, 1);
 	inititemcontent();
 	initprivatemethodsandvariables();
+	this->_itemtransform = ref new CompositeTransform();
+	this->RenderTransform = this->_itemtransform ;
+	initanimationproperties();
 }
 
 			

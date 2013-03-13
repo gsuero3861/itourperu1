@@ -22,6 +22,7 @@ namespace IControls
 				{ 
 					this->_itemwidth =  value ; 
 					this->Width = value ;
+					this->_itemtransform->CenterX = value / 2 ;
 				}
 				float64 get(){ return this->_itemwidth ;}
 			}
@@ -32,6 +33,7 @@ namespace IControls
 				{ 
 					this->_itemheight =  value ; 
 					this->Height = value ;
+					this->_itemtransform->CenterY = value / 2 ;
 				}
 				float64 get(){ return this->_itemheight ;}
 			}
@@ -50,6 +52,7 @@ namespace IControls
 				void set(float64 value)
 				{ 
 					this->_initialangle =  value ;  
+					this->_itemtransform->Rotation = value ; 
 				}
 				float64 get(){ return this->_initialangle ;}
 			}

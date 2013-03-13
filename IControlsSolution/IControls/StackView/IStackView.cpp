@@ -26,7 +26,7 @@ IStackView::IStackView()
 void IStackView::initcontrols()
 {  
 	this->_itemsgrid	= ref new Windows::UI::Xaml::Controls::Grid();
-	this->_itemsgrid->ManipulationMode  = ManipulationModes::System ;
+	this->_itemsgrid->ManipulationMode  = ManipulationModes::All ;
 	this->_itemsgrid->Background	= ref new SolidColorBrush(Windows::UI::Colors::AliceBlue);
 
 	this->_itemsgrid->PointerPressed += ref new PointerEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_PointerPressed_1);
@@ -36,7 +36,16 @@ void IStackView::initcontrols()
 	this->_itemsgrid->ManipulationCompleted += ref new ManipulationCompletedEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_ManipulationCompleted_1);
 	this->_itemsgrid->ManipulationDelta += ref new ManipulationDeltaEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_ManipulationDelta_1);
 	
-	this->Children->Append(this->_itemsgrid);
+	this->_itemspanel =  ref new StackPanel();
+	this->_itemspanel->Orientation = Orientation::Horizontal ;
+
+	this->_begingrid = ref new Grid();
+	this->_endgrid = ref new Grid();
+	this->_itemspanel->Children->Append(this->_begingrid);
+	this->_itemspanel->Children->Append(this->_itemsgrid);
+	this->_itemspanel->Children->Append(this->_endgrid);
+
+	this->Children->Append(this->_itemspanel);
 	initanimationproperties();
 }
 
@@ -63,8 +72,11 @@ void IStackView::loaditems()
 		titem->ItemHeight =  this->_itemheight ;
 		titem->ItemContentWidth = this->_itemcontentwidth ;
 		titem->ItemContentHeight =  this->_itemcontentheight ;
-		titem->InitialAngle = this->_angles[i%3];
+		titem->ItemNumber = i ;
+		float64 angle = this->_angles[i%3];
+		titem->InitialAngle = angle ;
 		titem->ItemContent = tgrid ;
+		this->_itemsgrid->Children->Append(titem);
 	}
 }
 
@@ -90,6 +102,12 @@ void IStackView::AnimateToThumb()
 
 void IStackView::initproperties()
 {
+	this->_itemwidth = 100 ;
+	this->_itemcontentwidth = 100 ;
+	this->_itemheight = 100 ;
+	this->_itemcontentheight = 100 ;
+	this->_stackwidth = 100 ;
+
 	_angles[0] = 0.0 ;
 	_angles[1] = 8.0 ;
 	_angles[2] = 15.0 ,
@@ -109,6 +127,8 @@ void IStackView::openstack()
 	this->_itemsgridstory->Begin();
 	for (int i = 0; i < this->_numberofitems; i++) 
 		((IStackItem^)this->_itemsgrid->Children->GetAt(i))->OpenItem();
+	this->_stackviewstate = StackViewState::Open ;
+	this->_currentscale = (float64)this->_numberofitems ;
 }
 
 void IStackView::closestack()
@@ -117,11 +137,19 @@ void IStackView::closestack()
 	this->_itemsgridstory->Begin();
 	for (int i = 0; i < this->_numberofitems; i++) 
 		((IStackItem^)this->_itemsgrid->Children->GetAt(i))->CloseItem();
+	this->_currentscale = 1.0 ;
+	this->_stackviewstate = StackViewState::Close ;
 }
  
 
 void IStackView::updatestackitems()
-{}
+{
+	for (int i = 0; i < _numberofitems; i++)
+	{
+		((IStackItem^)this->_itemsgrid->Children->GetAt(i))->ItemTransform->TranslateX =   i * ((_itemsgrid->ActualWidth  - _itemwidth ) / (_numberofitems	 - 1 )) ; 
+		((IStackItem^)this->_itemsgrid->Children->GetAt(i))->ItemTransform->Rotation = (1.0 - this->_currentscale / this->_numberofitems) * ((IStackItem^)this->_itemsgrid->Children->GetAt(i))->InitialAngle  ;
+	}
+}
 
 #pragma endregion
 
@@ -146,6 +174,12 @@ void IStackView::initanimationproperties()
 
 #pragma region Event Handlers Functions
 
+void IControls::StackView::IStackView::StackItemSelected_1(Platform::Object ^ sender , int32 _currentitem)
+{
+	this->_selecteditem = _currentitem ;
+	this->_stackmanipulatiotype = StackManipulationType::ItemManipulation ;
+}
+
 void IControls::StackView::IStackView::ItemsGrid_Tapped_1(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
 	(this->*_tapfunctions[(int32)this->_stackviewstate])();
@@ -156,17 +190,65 @@ void IControls::StackView::IStackView::ItemsGrid_DoubleTapped_1(Platform::Object
 	(this->*_doubletapfunctions[(int32)this->_stackviewstate])();
 }
 
-void IControls::StackView::IStackView::ItemsGrid_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e)
-{}
 
 void IControls::StackView::IStackView::ItemsGrid_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e)
-{}
+{
+	if(this->_numberoftouches >= 2)
+	{
+		if(_stackmanipulatiotype == StackManipulationType::StackManipulation)
+		{
+			this->_currentscale *= e->Delta.Scale ;
+			if (this->_currentscale > (float64)this->_numberofitems)
+				this->_currentscale = (float64)this->_numberofitems ;
+
+			if ( this->_currentscale < 1.0)
+				this->_currentscale =  1.0 ;
+
+			this->_itemsgrid->Width = this->_currentscale * this->_itemwidth ;
+			//set all the properties
+			updatestackitems();
+		}
+
+		if(_stackmanipulatiotype == StackManipulationType::ItemManipulation)
+		{
+		}
+	}
+
+	if(e->IsInertial)
+	{
+		e->Complete();
+		return;
+	}
+	
+}
+
+void IControls::StackView::IStackView::ItemsGrid_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e)
+{
+	if(_stackmanipulatiotype == StackManipulationType::StackManipulation)
+	{
+		if(this->_currentscale > 2.5)
+			openstack();
+		else
+			closestack();
+	}
+
+	if(_stackmanipulatiotype == StackManipulationType::ItemManipulation)
+	{
+	}
+
+	this->_numberoftouches = 0 ;
+}
+
 
 void IControls::StackView::IStackView::ItemsGrid_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
-{}
+{
+	this->_numberoftouches -= 1 ;
+}
 
 void IControls::StackView::IStackView::ItemsGrid_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
-{}
+{
+	this->_numberoftouches += 1 ;
+}
 
 #pragma endregion
 
@@ -175,8 +257,8 @@ void IControls::StackView::IStackView::ItemsGrid_PointerPressed_1(Platform::Obje
   
 void IStackView::inittapfunctions()
 {
-	_tapfunctions[0] = &IStackView::tapclosedstack;
-	_tapfunctions[1] = &IStackView::tapopennedstack;
+	_tapfunctions[1] = &IStackView::tapclosedstack;
+	_tapfunctions[0] = &IStackView::tapopennedstack;
 }
 
 bool IStackView::tapclosedstack()
@@ -186,7 +268,7 @@ bool IStackView::tapclosedstack()
 }
 
 bool IStackView::tapopennedstack()
-{
+{ 
 	return true ;
 }
 
@@ -196,8 +278,8 @@ bool IStackView::tapopennedstack()
 
 void IStackView::initdoubletapfunctions()
 {
-	_doubletapfunctions[0] = &IStackView::doubletapclosedstack ;
-	_doubletapfunctions[1] = &IStackView::doubletapopennedstack ;
+	_doubletapfunctions[1] = &IStackView::doubletapclosedstack ;
+	_doubletapfunctions[0] = &IStackView::doubletapopennedstack ;
 }
 
 bool IStackView::doubletapclosedstack()

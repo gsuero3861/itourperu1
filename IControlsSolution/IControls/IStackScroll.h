@@ -33,7 +33,26 @@ namespace IControls
 		void initscrollcontrols();
 
 		Windows::UI::Xaml::Media::CompositeTransform^ _paneltransform ;
-		
+	
+#pragma endregion
+
+
+#pragma region Stack Scroll Temporal Data Load
+
+	public:
+		property Windows::Foundation::Collections::IVector<Platform::String^>^ ItemsList
+		{
+			void set(Windows::Foundation::Collections::IVector<Platform::String^>^ value)
+			{
+				this->_itemslist = value ;
+				loaditems();
+			}
+			Windows::Foundation::Collections::IVector<Platform::String^>^ get(){ return this->_itemslist ; }
+		}
+
+	private:
+		Windows::Foundation::Collections::IVector<Platform::String^>^ _itemslist ;
+		void loaditems();
 #pragma endregion
 
 
