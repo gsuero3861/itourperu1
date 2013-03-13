@@ -10,3 +10,6 @@
 
 #include "StackView\IStackItem.h"
 #include "StackView\IStackView.h"
+
+#include "IStackScroll.h"
+

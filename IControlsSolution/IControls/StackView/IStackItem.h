@@ -73,6 +73,9 @@ namespace IControls
 
 		public:
 
+			void OpenItem();
+			void CloseItem();
+
 			property Windows::UI::Xaml::Media::CompositeTransform ^ ItemTransform
 			{
 				void set(Windows::UI::Xaml::Media::CompositeTransform ^ value){}
@@ -90,6 +93,14 @@ namespace IControls
 		private:
 			int32 _numberoftouches ;
 			void initprivatemethodsandvariables();
+			 
+			//_itemtransform
+			Windows::UI::Xaml::Media::Animation::Storyboard ^ _translatestory ;
+			Windows::UI::Xaml::Media::Animation::DoubleAnimation ^ _translateXanimation;
+			Windows::UI::Xaml::Media::Animation::Storyboard ^ _rotatestory ;
+			Windows::UI::Xaml::Media::Animation::DoubleAnimation ^ _rotateanimation;
+			 
+			void initanimationproperties();
 #pragma endregion
 
 
@@ -135,7 +146,7 @@ namespace IControls
 		private:
 			void ItemContent_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 			void ItemContent_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
-
+			
 #pragma endregion
 
 		};

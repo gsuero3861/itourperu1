@@ -21,6 +21,27 @@ IStackItem::IStackItem()
 	initprivatemethodsandvariables();
 }
 
+			
+#pragma region Item
+ 
+void IStackItem::OpenItem()
+{
+	this->_translateXanimation->To = this->_itemwidth * this->_itemnumber ;
+	this->_rotateanimation->To = 0.0 ;
+	this->_rotatestory->Begin();
+	this->_translatestory->Begin();
+}
+
+void IStackItem::CloseItem()
+{
+	this->_translateXanimation->To = 0.0 ;
+	this->_rotateanimation->To = this->_initialangle ;
+	this->_rotatestory->Begin();
+	this->_translatestory->Begin();
+} 
+
+#pragma endregion
+
 
 #pragma region Item Content
 
@@ -60,6 +81,27 @@ void IControls::StackView::IStackItem::ItemContent_PointerReleased_1(Platform::O
 void IStackItem::initprivatemethodsandvariables()
 {
 	_numberoftouches = 0 ; 
+}
+
+void IStackItem::initanimationproperties()
+{
+	Windows::Foundation::TimeSpan ts;
+	ts.Duration = 3000000 ;
+	Windows::UI::Xaml::Duration dur(ts) ;
+
+	this->_translatestory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
+	this->_translateXanimation = ref new Windows::UI::Xaml::Media::Animation::DoubleAnimation();
+	this->_translateXanimation->Duration = dur ;
+	this->_translatestory->Children->Append(this->_translateXanimation);
+	Windows::UI::Xaml::Media::Animation::Storyboard::SetTarget(this->_translateXanimation, this->_itemtransform) ;
+	Windows::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(this->_translateXanimation , "TranslateX") ;
+	
+	this->_rotatestory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
+	this->_rotateanimation = ref new Windows::UI::Xaml::Media::Animation::DoubleAnimation(); ;	
+	this->_rotateanimation->Duration = dur ;
+	this->_rotatestory->Children->Append(_rotateanimation) ;	
+	Windows::UI::Xaml::Media::Animation::Storyboard::SetTarget(this->_rotateanimation, this->_itemtransform) ;
+	Windows::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(this->_rotateanimation , "Rotation") ; 
 }
 
 #pragma endregion

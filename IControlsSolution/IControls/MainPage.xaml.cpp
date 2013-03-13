@@ -23,7 +23,27 @@ using namespace Windows::UI::Xaml::Navigation;
 
 MainPage::MainPage()
 {
-	InitializeComponent();
+	InitializeComponent(); 
+	Grid ^ a = ref new Grid();
+	a->Background = ref new SolidColorBrush(Windows::UI::Colors::Aqua);
+	a->Height =500 ;
+	a->Width = 1500 ;
+	Grid ^ b = ref new Grid();
+	b->Background = ref new SolidColorBrush(Windows::UI::Colors::Red);
+	b->Height =500 ;
+	b->Width = 1500 ;
+	Grid ^ c = ref new Grid();
+	c->Background = ref new SolidColorBrush(Windows::UI::Colors::Blue);
+	c->Height =500 ;
+	c->Width = 1500 ;
+	Grid ^ d = ref new Grid();
+	d->Height =500 ;
+	d->Width = 1500 ;
+	d->Background = ref new SolidColorBrush(Windows::UI::Colors::Aqua);
+	stackscroll1->additem(a);
+	stackscroll1->additem(b);
+	stackscroll1->additem(c);
+	stackscroll1->additem(d);
 }
 
 /// <summary>
