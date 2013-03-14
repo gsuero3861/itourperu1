@@ -17,6 +17,8 @@ using namespace Windows::UI::Xaml::Navigation;
 IStackItem::IStackItem()
 {
 	this->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Left ;
+	//this->ManipulationMode = ManipulationModes::All;
+	this->Background =  ref new SolidColorBrush(Windows::UI::Colors::Transparent);
 	Canvas::SetZIndex(this, 1);
 	inititemcontent();
 	initprivatemethodsandvariables();
@@ -53,6 +55,8 @@ void IStackItem::CloseItem()
 void IStackItem::inititemcontent()
 {
 	this->_itemcontent = ref new Grid();
+	//this->_itemcontent->ManipulationMode = ManipulationModes::All;
+	this->_itemcontent->Background =  ref new SolidColorBrush(Windows::UI::Colors::Transparent);
 	this->Children->Append(this->_itemcontent);
 	
 	this->_itemcontent->PointerPressed += ref new PointerEventHandler(this,&IControls::StackView::IStackItem::ItemContent_PointerPressed_1 );

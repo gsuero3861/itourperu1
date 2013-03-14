@@ -25,9 +25,9 @@ MainPage::MainPage()
 {
 	InitializeComponent();  
 	_paths = ref new Platform::Collections::Vector<Platform::String^>();
-	for (int i = 0; i < 16; i++)
+	for (int i = 0; i < 8; i++)
 	{
-		_paths->Append("ms-appx:///images/img"+ i +".jpg");
+		_paths->Append("ms-appx:///images/img"+ i +".png");
 	}
 
 	stackscroll1->ItemsList = _paths ;
@@ -66,7 +66,7 @@ MainPage::MainPage()
 /// </summary>
 /// <param name="e">Event data that describes how this page was reached.  The Parameter
 /// property is typically used to configure the page.</param>
-void MainPage::OnNavigatedTo(NavigationEventArgs^ e)
+/**void MainPage::OnNavigatedTo(NavigationEventArgs^ e)
 {
 	(void) e;	// Unused parameter
-}
+}*/

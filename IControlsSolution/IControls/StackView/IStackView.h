@@ -21,14 +21,22 @@ namespace IControls
 			Zero,One,Two,Many
 		};
 
-		public delegate void StackViewItemManipulationStartedEventHandler(Platform::Object ^ sender , int32 _currentitem);
+		public delegate void StackViewManipulationStartedEventHandler(Platform::Object ^ sender , int32 _type);
+		public delegate void StackViewManipulationFinishedEventHandler(Platform::Object ^ sender , int32 _type);
+		public delegate void StackViewOpenEventHandler(Platform::Object^ sender, int32 _stacknumber );
+		public delegate void StackViewCloseEventHandler(Platform::Object^ sender, int32 _stacknumber , float64 _scroll  );
+		public delegate void StackViewScrollToEventHandler(Platform::Object^ sender, float64 delta);
 
 		[Windows::Foundation::Metadata::WebHostHidden]
 		public ref class IStackView sealed : public Windows::UI::Xaml::Controls::Grid 
 		{
 		public:
 			IStackView();
-
+			event StackViewOpenEventHandler ^ OnStackViewOpen ;
+			event StackViewCloseEventHandler ^ OnStackViewClose ;
+			event StackViewManipulationStartedEventHandler ^ StackViewManipulationStarted ;
+			event StackViewManipulationFinishedEventHandler^ StackViewManipulationFinished ;
+			event StackViewScrollToEventHandler^ StackViewScrollTo ;
 #pragma region Controls
 
 		private:
@@ -53,6 +61,7 @@ namespace IControls
 				void set(float64 value)
 				{
 					this->_itemwidth = value ; 
+					this->_itemsgrid->Width = value ;
 					//this->_begingrid->Width = (_stackwidth - this->_itemwidth) / 2 ;
 					//this->_endgrid->Width = (_stackwidth - this->_itemwidth) / 2 ;
 				}
@@ -112,11 +121,29 @@ namespace IControls
 				}
 			}
 
+			property int32 StackNumber
+			{
+				void set(int32 value){ this->_stacknumber =  value ;}
+				int32 get(){ return this->_stacknumber ;}
+			}
+			
+			property int32 StackSize
+			{
+				void set(int32 value){ this->_numberofitems =  value ;}
+				int32 get(){ return this->_numberofitems ;}
+			}
+
+			property float64 CurrentScale
+			{
+				void set(float64 value){ this->_currentscale =  value ;}
+				float64 get(){ return this->_currentscale ;}
+			}
+
 		private: 
 			float64 _stackwidth, _currentwidth ;
 			float64 _itemwidth, _itemheight ;
 			float64 _itemcontentwidth , _itemcontentheight ;
-			int32 _selecteditem ;
+			int32 _selecteditem, _stacknumber ;
 			float64 _fullXposition , _fullYposition ;
 
 
@@ -147,6 +174,9 @@ namespace IControls
 			int32 _numberofitems, _numberoftouches ;
 			float64 _currentscale ;
 			float64 _angles[3] ;
+			bool _cananimate  ;
+			float64 _constantdelta ; //to scroll 
+			float64 _tempwidth ;
 
 			StackViewState _stackviewstate ;
 			StackManipulationType _stackmanipulatiotype ;
@@ -192,6 +222,9 @@ namespace IControls
 			void ItemsGrid_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
 			void ItemsGrid_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 			void ItemsGrid_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+			void ItemsGrid_ManipulationInertiaStarting(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e);
+			void ItemsGrid_PointerExited_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+			void ItemsGrid_ManipulationStarted(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationStartedRoutedEventArgs^ e);
 
 			void StackItemSelected_1(Platform::Object ^ sender , int32 _currentitem);
 

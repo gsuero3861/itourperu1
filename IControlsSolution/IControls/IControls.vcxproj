@@ -163,21 +163,37 @@
     <Image Include="Assets\StoreLogo.png" />
     <Image Include="Assets\SplashScreen.png" />
     <Image Include="images\img0.jpg" />
+    <Image Include="images\img0.png" />
     <Image Include="images\img1.jpg" />
+    <Image Include="images\img1.png" />
     <Image Include="images\img10.jpg" />
+    <Image Include="images\img10.png" />
     <Image Include="images\img11.jpg" />
+    <Image Include="images\img11.png" />
     <Image Include="images\img12.jpg" />
+    <Image Include="images\img12.png" />
     <Image Include="images\img13.jpg" />
+    <Image Include="images\img13.png" />
     <Image Include="images\img14.jpg" />
+    <Image Include="images\img14.png" />
     <Image Include="images\img15.jpg" />
+    <Image Include="images\img15.png" />
     <Image Include="images\img2.jpg" />
+    <Image Include="images\img2.png" />
     <Image Include="images\img3.jpg" />
+    <Image Include="images\img3.png" />
     <Image Include="images\img4.jpg" />
+    <Image Include="images\img4.png" />
     <Image Include="images\img5.jpg" />
+    <Image Include="images\img5.png" />
     <Image Include="images\img6.jpg" />
+    <Image Include="images\img6.png" />
     <Image Include="images\img7.jpg" />
+    <Image Include="images\img7.png" />
     <Image Include="images\img8.jpg" />
+    <Image Include="images\img8.png" />
     <Image Include="images\img9.jpg" />
+    <Image Include="images\img9.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.xaml.cpp">

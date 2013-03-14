@@ -19,6 +19,7 @@ IStackScroll::IStackScroll()
 	initscrollcontrols();
 	initpointerfunctions();
 	initanimationproperties();
+	_ismanipulating = false ;
 }
 
 void IStackScroll::additem(Grid^ item)
@@ -31,10 +32,13 @@ void IStackScroll::additem(Grid^ item)
 void IStackScroll::initscrollcontrols()
 {
 	this->_scrollgrid = ref new Windows::UI::Xaml::Controls::Grid();
+	//this->_scrollgrid->Background = ref new SolidColorBrush(Windows::UI::Colors::Transparent);
+	//this->_scrollgrid->ManipulationMode = ManipulationModes::All ;
+
 	this->Children->Append(this->_scrollgrid);
 	this->_panelstacks = ref new Windows::UI::Xaml::Controls::StackPanel();
 	this->_panelstacks->Orientation = Windows::UI::Xaml::Controls::Orientation::Horizontal ;
-	this->_panelstacks->Background = ref new SolidColorBrush(Windows::UI::Colors::Blue);
+	this->_panelstacks->Background = ref new SolidColorBrush(Windows::UI::Colors::BlanchedAlmond);
 	this->_panelstacks->ManipulationMode = ManipulationModes::All ;
 	this->_scrollviewer = ref new Windows::UI::Xaml::Controls::ScrollViewer() ; 
 	this->_scrollviewer->HorizontalScrollMode = Windows::UI::Xaml::Controls::ScrollMode::Enabled;
@@ -65,7 +69,7 @@ void IStackScroll::initscrollcontrols()
 void IStackScroll::initanimationproperties()
 {
 	Windows::Foundation::TimeSpan ts;
-	ts.Duration = 3000000 ;
+	ts.Duration = 2500000 ;
 	Windows::UI::Xaml::Duration duration(ts) ;
 
 	this->_panelstory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
@@ -81,22 +85,90 @@ void IStackScroll::initanimationproperties()
 
 #pragma region Stack Scroll Private Methods
 
+void IControls::IStackScroll::StackViewScrollTo(Platform::Object^ sender, float64 delta)
+{
+	float64 _delta = this->_paneltransform->TranslateX + delta  ;
+	
+	if(_delta < this->_scrollgrid->Width - this->_panelstacks->ActualWidth) //this->_finaltranslate + (((IStackView^)sender)->CurrentScale -1)*((IStackView^)sender)->ItemWidth )
+		_delta = this->_scrollgrid->Width - this->_panelstacks->ActualWidth ;
+	if(_delta > 0.0)
+		_delta = 0.0 ;
+	this->_paneltransform->TranslateX = _delta ;
+}
+
+void IControls::IStackScroll::StackViewManipulationStarted_1(Platform::Object ^ sender , int32 _type)
+{
+	_scrollmanipulationstate = ScrollManipulationState::Dislable ; 
+}
+
+void IControls::IStackScroll::StackViewManipulationFinished(Platform::Object ^ sender , int32 _type)
+{
+	_scrollmanipulationstate = ScrollManipulationState::Enable ; 
+}
+
+//when an stack is openned
+void IControls::IStackScroll::StackViewOpen_1(Platform::Object^ sender, int32 _stacknumber )
+{ 
+	float64 _citemposition = 0.0;
+	float64 _newfinalpos =  this->_scrollgrid->Width -  this->_panelstacks->ActualWidth  ; 
+	for (int i = 0; i < _stacknumber; i++)
+	{
+		_citemposition += ((IStackView^)this->_panelstacks->Children->GetAt(i))->CurrentWidth;
+	}
+	if( _citemposition * -1  < _newfinalpos )
+		this->_panelanimation->To = _newfinalpos ;
+	else
+		this->_panelanimation->To = _citemposition * -1 ;
+
+	this->_panelanimation->To = _citemposition * -1 ;
+	this->_panelstory->Begin();
+	float64 delta = (((IStackView^)sender)->StackSize - 1) * ((IStackView^)sender)->ItemWidth ; 
+	this->_finaltranslate = _newfinalpos ;
+
+	//this->_finaltranslate -= delta ;
+	//this->_panelstacks->Width += delta ; 
+}
+
+//when an stack is closed
+void IControls::IStackScroll::StackViewClose_1(Platform::Object^ sender, int32 _stacknumber , float64 _scroll)
+{ 
+	float64 _citemposition = 0.0;
+	float64 _newfinalpos =  this->_scrollgrid->Width -  this->_panelstacks->ActualWidth + (((IStackView^)sender)->CurrentScale - 1) * ((IStackView^)sender)->ItemWidth   ; 
+	float64 _newctranslate = this->_paneltransform->TranslateX + _scroll ;
+	
+	if(_newctranslate > 0.0 )
+		_newctranslate = 0.0 ;
+	if(_newctranslate < _newfinalpos )
+		_newctranslate = _newfinalpos ;	
+	this->_panelanimation->To  =  _newctranslate ;
+	this->_panelstory->Begin();
+	float64 delta = (((IStackView^)sender)->StackSize - 1) * ((IStackView^)sender)->ItemWidth ;
+	
+	this->_finaltranslate = _newfinalpos ;
+
+	//this->_finaltranslate += delta ;
+	//this->_panelstacks->Width -= delta ; 
+}
+
+
 void IControls::IStackScroll::Panel_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e)
 {
-	//if(_scrolltouches == ScrollStackTouches::One &&  _scrollmanipulationstate == ScrollManipulationState::Enable)
-	if(this->_numberoftouches <= 1 &&  _scrollmanipulationstate == ScrollManipulationState::Enable)
+	  float64 x ;
+	//if(_scrolltouches == ScrollStackTouches::One &&  _scrollmanipulationstate == ScrollManipulationState::Enable) this->_numberoftouches <= 1 &&
+	if(  _scrollmanipulationstate == ScrollManipulationState::Enable)
 	{
-		float64 x = fmod( abs(this->_finaltranslate - this->_currenttrnaslate), abs(this->_finaltranslate)) ;
+		
 		if(this->_paneltransform->TranslateX > this->_initialtranslate || this->_paneltransform->TranslateX < this->_finaltranslate)
 		{ 
-			this->_currentdelta = e->Delta.Translation.X / ( x+1 ) * 5 ;
+			x = fmod( abs(this->_finaltranslate - this->_currenttrnaslate), abs(this->_finaltranslate)) ;
+			if(x > 0)
+				this->_currentdelta = e->Delta.Translation.X / ( x + 1 ) * 5 ;
+
 		}else
 		{
 			this->_currentdelta = e->Delta.Translation.X ;
-			x=0.0 ;
+			x=1.0 ;
 		}
-
-		//this->_paneltransform->TranslateX += this->_currentdelta ;
 
 		if(!e->IsInertial)
 		{
@@ -110,7 +182,11 @@ void IControls::IStackScroll::Panel_ManipulationDelta_1(Platform::Object^ sender
 				e->Complete(); 
 		} 
 		this->_currenttrnaslate = this->_paneltransform->TranslateX ;
-
+		_ismanipulating = true ;
+	}
+	else
+	{
+		int a = 0 ;
 	}
 }
 	
@@ -128,26 +204,31 @@ void IControls::IStackScroll::Panel_ManipulationCompleted_1(Platform::Object^ se
 		this->_panelanimation->To = this->_finaltranslate ;
 		this->_panelstory->Begin();
 	}
+	_ismanipulating = false ;
+	//this->_scrolltouches = ScrollStackTouches::Zero ;
+	//this->_numberoftouches = 0 ;
+	 _scrollmanipulationstate = ScrollManipulationState::Enable ;
 
-	this->_scrolltouches = ScrollStackTouches::Zero ;
 }
 	
 
 void IControls::IStackScroll::Panel_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
-	(this->*_pointerreleasedfunctions[(int32)this->_scrolltouches - 1 ])();
-	this->_numberoftouches -= 1 ;
+	//(this->*_pointerreleasedfunctions[(int32)this->_scrolltouches - 1 ])();
+	//this->_numberoftouches -= 1 ;
 }
 	
 void IControls::IStackScroll::Panel_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
-	(this->*_pointerpressedfunctions[(int32)this->_scrolltouches])();
-	this->_numberoftouches += 1 ;
+	//(this->*_pointerpressedfunctions[(int32)this->_scrolltouches])();
+	//this->_numberoftouches += 1 ;
+
+	this->_finaltranslate = this->_scrollgrid->Width - this->_panelstacks->ActualWidth  ;
 }		
 
 void IControls::IStackScroll::Panel_ManipulationInertiaStarting_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e)
 {
-
+	//e->Handled = true ;
 }
 
 
@@ -168,19 +249,29 @@ void IStackScroll::initprivateproperties()
 #pragma region Stack Scroll Temporal Data Load
  
 void IStackScroll::loaditems()
-{
-	for (int i = 0; i < 5; i++)
+{  
+	int numberofstacks = 5 ;
+	for (int i = 0; i < numberofstacks; i++)
 	{
 		IStackView^ tmpstack = ref new IStackView();
-		tmpstack->ItemContentHeight = 300 ;
-		tmpstack->ItemContentWidth = 400 ;
-		tmpstack->ItemHeight = 300 ;
-		tmpstack->ItemWidth = 460 ;
-		tmpstack->StackWidth = 800 ;
+		tmpstack->ItemContentHeight = 180 ;
+		tmpstack->ItemContentWidth = 230 ;
+		tmpstack->ItemHeight = 180 ;
+		tmpstack->ItemWidth = 270 ;
+		tmpstack->StackWidth = 500 ;
 		tmpstack->ItemsList = _itemslist ;	
+		tmpstack->StackNumber = i ;
+		tmpstack->OnStackViewOpen += ref new StackViewOpenEventHandler(this, &IControls::IStackScroll::StackViewOpen_1);
+		tmpstack->OnStackViewClose += ref new StackViewCloseEventHandler(this, &IControls::IStackScroll::StackViewClose_1);
+		tmpstack->StackViewManipulationStarted += ref new StackViewManipulationStartedEventHandler(this, &IControls::IStackScroll::StackViewManipulationStarted_1);
+		tmpstack->StackViewManipulationFinished += ref new StackViewManipulationFinishedEventHandler(this, &IControls::IStackScroll::StackViewManipulationFinished);
+		tmpstack->StackViewScrollTo += ref new StackViewScrollToEventHandler(this,&IControls::IStackScroll::StackViewScrollTo );
+		tmpstack->Background = ref new SolidColorBrush(Windows::UI::Colors::Transparent);
 		this->_panelstacks->Children->Append(tmpstack);
 	}
 	
+	//this->_panelstacks->Width = numberofstacks * 600 ;
+	this->_finaltranslate = -1* numberofstacks * 500  + 1600;
 }
 
 #pragma endregion

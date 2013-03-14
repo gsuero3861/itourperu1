@@ -75,8 +75,8 @@ namespace IControls
 			{
 				this->_scrollviewer->Width = value ;
 				this->_scrollgrid->Width = value ;
-				this->_panelstacks->Width = 4 * value ;
-				this->_finaltranslate = -3 * value ;
+				//this->_panelstacks->Width = 4 * value ;
+				//this->_finaltranslate = -3 * value ;
 			}
 			float64 get(){return this->_scrollviewer->Width ;}
 		}
@@ -108,12 +108,19 @@ namespace IControls
 		int32 _numberoftouches ;
 		float64 _initialtranslate, _finaltranslate , _currenttrnaslate, _currentdelta;
 
+		bool _ismanipulating ;
+
 
 #pragma endregion
 		
 #pragma region Stack Scroll Private Methods
 
 	private:
+		void StackViewOpen_1(Platform::Object^ sender, int32 _stacknumber );
+		void StackViewClose_1(Platform::Object^ sender, int32 _stacknumber , float64 _scroll);
+		void StackViewManipulationStarted_1(Platform::Object ^ sender , int32 _type);
+		void StackViewManipulationFinished(Platform::Object ^ sender , int32 _type);
+		void StackViewScrollTo(Platform::Object^ sender, float64 delta);
  
 		void Panel_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e);
 		void Panel_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
