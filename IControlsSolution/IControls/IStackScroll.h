@@ -105,8 +105,9 @@ namespace IControls
 		ScrollDeltaType _scrolldeltatype ;
 		ScrollStackTouches _scrolltouches ;
 		
-		int32 _numberoftouches ;
+		int32 _numberoftouches , _numberofstacks ;
 		float64 _initialtranslate, _finaltranslate , _currenttrnaslate, _currentdelta;
+		int32 _selectedstack, _selectedstackitem ;
 
 		bool _ismanipulating ;
 
@@ -121,6 +122,7 @@ namespace IControls
 		void StackViewManipulationStarted_1(Platform::Object ^ sender , int32 _type);
 		void StackViewManipulationFinished(Platform::Object ^ sender , int32 _type);
 		void StackViewScrollTo(Platform::Object^ sender, float64 delta);
+		void StackView_TranformChanged(Platform::Object^ sender);
  
 		void Panel_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e);
 		void Panel_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);

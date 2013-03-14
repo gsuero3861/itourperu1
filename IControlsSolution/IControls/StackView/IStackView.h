@@ -26,6 +26,7 @@ namespace IControls
 		public delegate void StackViewOpenEventHandler(Platform::Object^ sender, int32 _stacknumber );
 		public delegate void StackViewCloseEventHandler(Platform::Object^ sender, int32 _stacknumber , float64 _scroll  );
 		public delegate void StackViewScrollToEventHandler(Platform::Object^ sender, float64 delta);
+		public delegate void StackViewTranformChangedEventHandler(Platform::Object^ sender);
 
 		[Windows::Foundation::Metadata::WebHostHidden]
 		public ref class IStackView sealed : public Windows::UI::Xaml::Controls::Grid 
@@ -37,6 +38,8 @@ namespace IControls
 			event StackViewManipulationStartedEventHandler ^ StackViewManipulationStarted ;
 			event StackViewManipulationFinishedEventHandler^ StackViewManipulationFinished ;
 			event StackViewScrollToEventHandler^ StackViewScrollTo ;
+			event StackViewTranformChangedEventHandler^ StackViewTranformChanged ;
+
 #pragma region Controls
 
 		private:
@@ -137,14 +140,14 @@ namespace IControls
 			{
 				void set(float64 value){ this->_currentscale =  value ;}
 				float64 get(){ return this->_currentscale ;}
-			}
+			} 
 
 		private: 
 			float64 _stackwidth, _currentwidth ;
 			float64 _itemwidth, _itemheight ;
 			float64 _itemcontentwidth , _itemcontentheight ;
 			int32 _selecteditem, _stacknumber ;
-			float64 _fullXposition , _fullYposition ;
+			float64 _fullXposition , _fullYposition ; 
 
 
 #pragma endregion
@@ -227,7 +230,9 @@ namespace IControls
 			void ItemsGrid_ManipulationStarted(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationStartedRoutedEventArgs^ e);
 
 			void StackItemSelected_1(Platform::Object ^ sender , int32 _currentitem);
+			void StackItem_Tapped(Platform::Object ^ sender , int32 _currentitem);
 
+			void Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e);
 #pragma endregion
 
 #pragma region Tap Pointer Functions

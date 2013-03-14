@@ -5,6 +5,7 @@ namespace IControls
 	namespace StackView
 	{
 		public delegate void StackItemSelectedEventHandler(Platform::Object ^ sender , int32 _currentitem);
+		public delegate void StackItemTappedEventHandler(Platform::Object ^ sender , int32 _currentitem);
 
 		[Windows::Foundation::Metadata::WebHostHidden]
 		public ref class IStackItem sealed : public Windows::UI::Xaml::Controls::Grid 
@@ -12,7 +13,10 @@ namespace IControls
 		public:
 			IStackItem();
 			event StackItemSelectedEventHandler ^ StackItemSelected ;
- 
+			event StackItemTappedEventHandler^ StackItemTapped ;
+
+
+
 #pragma region Properties
 
 		public:
@@ -149,7 +153,32 @@ namespace IControls
 		private:
 			void ItemContent_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 			void ItemContent_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+			void ItemContent_Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
 			
+#pragma endregion
+			
+#pragma region Item Content Animation
+		public :
+			void RestoreItem();
+			void AnimateTo(float64 _x, float64 _y ,float64 _scale);
+
+		private :
+			//Animations for the selected item
+			//Windows::UI::Xaml::Media::CompositeTransform ^ _currenttransform ;
+
+			Windows::UI::Xaml::Media::Animation::Storyboard^ _translatestory1 ;
+			Windows::UI::Xaml::Media::Animation::DoubleAnimation^ _translatexanimation1 ;
+			Windows::UI::Xaml::Media::Animation::DoubleAnimation^ _translateyanimation1 ;
+
+			Windows::UI::Xaml::Media::Animation::Storyboard^ _scalestory1 ;
+			Windows::UI::Xaml::Media::Animation::DoubleAnimation^ _scalexanimation1 ;
+			Windows::UI::Xaml::Media::Animation::DoubleAnimation^ _scaleyanimation1 ;
+
+			Windows::UI::Xaml::Media::Animation::Storyboard^ _rotatestory1;
+			Windows::UI::Xaml::Media::Animation::DoubleAnimation^ _rotateanimation1 ;
+			void inititemanimationstory();
+			void Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e);
+
 #pragma endregion
 
 		};

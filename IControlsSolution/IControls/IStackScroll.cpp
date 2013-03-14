@@ -85,6 +85,20 @@ void IStackScroll::initanimationproperties()
 
 #pragma region Stack Scroll Private Methods
 
+
+void IControls::IStackScroll::StackView_TranformChanged(Platform::Object^ sender)
+{
+	float64 _cumulativepos = 0.0 ;
+
+	///set the X and Y position to every stack
+	for (int i = 0 ; i < this->_numberofstacks ; i++)
+	{
+		((IStackView^)this->_panelstacks->Children->GetAt(i))->FullXPosition = abs(this->_paneltransform->TranslateX) - _cumulativepos + 800.0 ;
+		((IStackView^)this->_panelstacks->Children->GetAt(i))->FullYPosition = 0.0 ;
+		_cumulativepos += ((IStackView^)this->_panelstacks->Children->GetAt(i))->CurrentWidth ;
+	}
+}
+
 void IControls::IStackScroll::StackViewScrollTo(Platform::Object^ sender, float64 delta)
 {
 	float64 _delta = this->_paneltransform->TranslateX + delta  ;
@@ -209,6 +223,7 @@ void IControls::IStackScroll::Panel_ManipulationCompleted_1(Platform::Object^ se
 	//this->_numberoftouches = 0 ;
 	 _scrollmanipulationstate = ScrollManipulationState::Enable ;
 
+	 
 }
 	
 
@@ -250,14 +265,14 @@ void IStackScroll::initprivateproperties()
  
 void IStackScroll::loaditems()
 {  
-	int numberofstacks = 5 ;
-	for (int i = 0; i < numberofstacks; i++)
+	_numberofstacks = 5 ;
+	for (int i = 0; i < _numberofstacks; i++)
 	{
 		IStackView^ tmpstack = ref new IStackView();
 		tmpstack->ItemContentHeight = 180 ;
 		tmpstack->ItemContentWidth = 230 ;
 		tmpstack->ItemHeight = 180 ;
-		tmpstack->ItemWidth = 270 ;
+		tmpstack->ItemWidth = 300 ;
 		tmpstack->StackWidth = 500 ;
 		tmpstack->ItemsList = _itemslist ;	
 		tmpstack->StackNumber = i ;
@@ -266,12 +281,13 @@ void IStackScroll::loaditems()
 		tmpstack->StackViewManipulationStarted += ref new StackViewManipulationStartedEventHandler(this, &IControls::IStackScroll::StackViewManipulationStarted_1);
 		tmpstack->StackViewManipulationFinished += ref new StackViewManipulationFinishedEventHandler(this, &IControls::IStackScroll::StackViewManipulationFinished);
 		tmpstack->StackViewScrollTo += ref new StackViewScrollToEventHandler(this,&IControls::IStackScroll::StackViewScrollTo );
+		tmpstack->StackViewTranformChanged += ref new StackViewTranformChangedEventHandler(this, &IControls::IStackScroll::StackView_TranformChanged);
 		tmpstack->Background = ref new SolidColorBrush(Windows::UI::Colors::Transparent);
 		this->_panelstacks->Children->Append(tmpstack);
 	}
 	
 	//this->_panelstacks->Width = numberofstacks * 600 ;
-	this->_finaltranslate = -1* numberofstacks * 500  + 1600;
+	this->_finaltranslate = -1* _numberofstacks * 500  + 1600;
 }
 
 #pragma endregion

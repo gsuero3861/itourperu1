@@ -20,6 +20,7 @@ IStackView::IStackView()
 	initdoubletapfunctions();
 	initproperties();
 	initcontrols();
+	 
 }
 
 #pragma region Controls 
@@ -79,6 +80,8 @@ void IStackView::loaditems()
 		float64 angle = this->_angles[i%3];
 		titem->InitialAngle = angle ;
 		titem->ItemContent = tgrid ;
+		titem->StackItemSelected += ref new StackItemSelectedEventHandler(this, &IControls::StackView::IStackView::StackItemSelected_1);
+		titem->StackItemTapped +=  ref new StackItemTappedEventHandler(this, &IControls::StackView::IStackView::StackItem_Tapped);
 		this->_itemsgrid->Children->Append(titem);
 	}
 }
@@ -88,13 +91,24 @@ void IStackView::loaditems()
 #pragma region Public Methods
  
 void IStackView::SetToFullScreen()
-{}
+{
+	//this->_currenttransform ->TranslateX  = _fullXposition ;
+	//this->_currenttransform ->TranslateY  = _fullYposition ; 
+}
 
 void IStackView::SetToThumb()
-{}
+{
+	//this->_currenttransform ->TranslateX = _selecteditem * _itemwidth ;
+	//this->_currenttransform ->TranslateY = 0.0 ;
+}
 
 void IStackView::AnimateToFullScreen()
-{}
+{
+	((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->AnimateTo( this->_fullXposition - this->_begingrid->Width , this->FullYPosition ,  5.0 ) ;
+	//this->_translatexanimation->To = _fullXposition ;
+	//this->_translateyanimation->To = _fullYposition ;
+	//this->_translatestory->Begin();
+}
 
 void IStackView::AnimateToThumb()
 {}
@@ -150,11 +164,11 @@ void IStackView::closestack()
 		
 		this->_itemgridanimation->To = this->_itemwidth ;
 		this->_itemgridanimation->From = this->_currentscale * this->_itemwidth ;
+		this->_itemsgridstory->Begin();
 		for (int i = 0; i < this->_numberofitems; i++) 
 			((IStackItem^)this->_itemsgrid->Children->GetAt(i))->CloseItem();
 		if(this->_currentscale > 1.0)
 			OnStackViewClose(this, this->_stacknumber, _constantdelta * this->_currentscale * this->_itemwidth);
-		this->_itemsgridstory->Begin();
 		this->_currentscale = 1.0 ;
 		this->_stackviewstate = StackViewState::Close ;
 		this->_numberoftouches =0 ;
@@ -188,17 +202,43 @@ void IStackView::initanimationproperties()
 	this->_itemsgridstory->Children->Append(this->_itemgridanimation);
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(_itemgridanimation , "(Grid.Width)");
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTarget(_itemgridanimation , _itemsgrid);
+
+	this->_itemsgridstory->Completed += ref new EventHandler<Platform::Object^>(this, &IControls::StackView::IStackView::Storyboard_Completed_1);
 }
+
 
 #pragma endregion
 
 
 #pragma region Event Handlers Functions
 
+void  IControls::StackView::IStackView::Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e)
+{
+	StackViewTranformChanged(this);
+}
+
+void IControls::StackView::IStackView::StackItem_Tapped(Platform::Object ^ sender , int32 _currentitem)
+{
+	if(this->_stackviewstate == StackViewState::Open)
+	{
+		this->_selecteditem = _currentitem ;
+		//this->_currenttransform = ((IStackItem^)sender)->ItemTransform ;
+		//Animate to full
+		((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ZIndex = 100 ;
+		AnimateToFullScreen();
+	}
+}
+
 void IControls::StackView::IStackView::StackItemSelected_1(Platform::Object ^ sender , int32 _currentitem)
 {
-	this->_selecteditem = _currentitem ;
-	this->_stackmanipulatiotype = StackManipulationType::ItemManipulation ;
+	//_currenttransform = ((IStackItem^)sender)->ItemTransform ;
+	if(_stackviewstate == StackViewState::Open)
+	{
+		this->_selecteditem = _currentitem ;
+		this->_stackmanipulatiotype = StackManipulationType::ItemManipulation ;
+		StackViewManipulationStarted(this, 1) ;
+		((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ZIndex = 100 ;
+	}
 }
 
 void IControls::StackView::IStackView::ItemsGrid_Tapped_1(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
@@ -206,6 +246,7 @@ void IControls::StackView::IStackView::ItemsGrid_Tapped_1(Platform::Object^ send
 	//this->_itemsgrid->Width = this->_currentscale * ( this->_itemwidth ) ;
 	StackViewManipulationFinished(this,0);
 	(this->*_tapfunctions[(int32)this->_stackviewstate])();
+	StackViewTranformChanged(this);
 	//_numberoftouches = 0 ;
 }
 
@@ -213,6 +254,7 @@ void IControls::StackView::IStackView::ItemsGrid_DoubleTapped_1(Platform::Object
 {
 	_constantdelta = e->GetPosition(this->_itemsgrid).X / (this->_numberofitems* this->_itemwidth);
 	(this->*_doubletapfunctions[(int32)this->_stackviewstate])();
+	StackViewTranformChanged(this);
 }
 
 void IControls::StackView::IStackView::ItemsGrid_ManipulationStarted(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationStartedRoutedEventArgs^ e)
@@ -229,12 +271,12 @@ void IControls::StackView::IStackView::ItemsGrid_ManipulationDelta_1(Platform::O
 {   
 	if(this->_numberoftouches >= 2)
 	{
-		if(e->IsInertial)
+		/**if(e->IsInertial)
 			{
 				e->Complete();
 				e->Handled = true ;
 			}
-
+			*/
 		if(_stackmanipulatiotype == StackManipulationType::StackManipulation)
 		{ 
 			StackViewManipulationStarted(this, 0 ); //type stackmanipulation
@@ -250,23 +292,28 @@ void IControls::StackView::IStackView::ItemsGrid_ManipulationDelta_1(Platform::O
 			updatestackitems();
 			if(this->_stackviewstate == StackViewState::Open)
 			{ 
-				float _scrollto =(_tempwidth -  this->_currentscale * this->_itemwidth ) / (_constantdelta  * this->ItemWidth );
+				float _scrollto =(_tempwidth -  this->_currentscale * this->_itemwidth ) / ((1-_constantdelta ) * this->ItemWidth );
 				StackViewScrollTo(this, _scrollto);
 			}
+			this->_cananimate = true ;
 		}
 
-		if(_stackmanipulatiotype == StackManipulationType::ItemManipulation)
+		if(_stackmanipulatiotype == StackManipulationType::ItemManipulation ) 
 		{
+			((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ItemTransform->TranslateX += e->Delta.Translation.X;
+			((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ItemTransform->TranslateY += e->Delta.Translation.Y;
+			((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ItemTransform->ScaleX *= e->Delta.Scale ;
+			((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ItemTransform->ScaleY *= e->Delta.Scale ;
+			((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ItemTransform->Rotation +=e->Delta.Rotation ;
+			this->_cananimate =false ;
 		}
-		this->_cananimate = true ;
+		
 	}
-
-	
+	 
 }
 
 void IControls::StackView::IStackView::ItemsGrid_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e)
-{
-
+{ 
 	//_stackmanipulatiotype == StackManipulationType::StackManipulation &&
 	if( this->_cananimate )
 	{
@@ -298,15 +345,23 @@ void IControls::StackView::IStackView::ItemsGrid_ManipulationCompleted_1(Platfor
 
 	if(_stackmanipulatiotype == StackManipulationType::ItemManipulation)
 	{
+		if(((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ItemTransform->ScaleX <= 2.5 )
+			((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->RestoreItem() ;
+		else
+			((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->AnimateTo( this->_fullXposition - this->_begingrid->Width , this->FullYPosition ,  5.0 )  ; //this->_itemwidth , this->FullYPosition ,  5.0 ) ;
 	}
 	StackViewManipulationFinished(this,0);
 	_stackmanipulatiotype = StackManipulationType::StackManipulation ;
 	this->_cananimate = false ;
 	this->_numberoftouches = 0 ;
+	StackViewTranformChanged(this);
 }
 
 void IControls::StackView::IStackView::ItemsGrid_ManipulationInertiaStarting(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e)
 {
+	if(_cananimate)
+		e->TranslationBehavior->DesiredDisplacement = 1 ;
+
 	//e->ExpansionBehavior->DesiredDeceleration = 3000.0 / (1000.0 * 1000.0);
 	/**if(_numberoftouches >=2 )
 		e->ExpansionBehavior->DesiredExpansion = 0.001 ; //DesiredDeceleration = 10.1 * 96 / (1000.0 * 1000.0);*/
