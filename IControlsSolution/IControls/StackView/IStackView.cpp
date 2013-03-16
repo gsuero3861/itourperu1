@@ -16,6 +16,7 @@ using namespace Windows::UI::Xaml::Navigation;
 IStackView::IStackView()
 {
 	_constantdelta = 1.0 ;
+	_ismanipulating = false ;
 	inittapfunctions();
 	initdoubletapfunctions();
 	initproperties();
@@ -34,7 +35,7 @@ void IStackView::initcontrols()
 	this->_itemsgrid->PointerPressed += ref new PointerEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_PointerPressed_1);
 	this->_itemsgrid->PointerReleased += ref new PointerEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_PointerReleased_1);
 	this->_itemsgrid->Tapped += ref new TappedEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_Tapped_1 );
-	this->_itemsgrid->DoubleTapped += ref new DoubleTappedEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_DoubleTapped_1 );
+	//this->_itemsgrid->DoubleTapped += ref new DoubleTappedEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_DoubleTapped_1 );
 	this->_itemsgrid->ManipulationCompleted += ref new ManipulationCompletedEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_ManipulationCompleted_1);
 	this->_itemsgrid->ManipulationDelta += ref new ManipulationDeltaEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_ManipulationDelta_1);
 	this->_itemsgrid->ManipulationInertiaStarting += ref new ManipulationInertiaStartingEventHandler(this, &IControls::StackView::IStackView::ItemsGrid_ManipulationInertiaStarting);
@@ -192,7 +193,7 @@ void IStackView::updatestackitems()
 void IStackView::initanimationproperties()
 {
 	Windows::Foundation::TimeSpan ts;
-	ts.Duration = 3000000 ;
+	ts.Duration = 2500000 ;
 	Windows::UI::Xaml::Duration duration(ts) ;
 
 	this->_itemsgridstory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
@@ -215,11 +216,13 @@ void IStackView::initanimationproperties()
 void  IControls::StackView::IStackView::Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e)
 {
 	StackViewTranformChanged(this);
+	this->_numberoftouches = 0 ;
+	_ismanipulating = false ;
 }
 
 void IControls::StackView::IStackView::StackItem_Tapped(Platform::Object ^ sender , int32 _currentitem)
 {
-	if(this->_stackviewstate == StackViewState::Open)
+	if(this->_stackviewstate == StackViewState::Open && !_ismanipulating)//and i f is not being manipulated->FALTA
 	{
 		this->_selecteditem = _currentitem ;
 		//this->_currenttransform = ((IStackItem^)sender)->ItemTransform ;
@@ -247,6 +250,7 @@ void IControls::StackView::IStackView::ItemsGrid_Tapped_1(Platform::Object^ send
 	StackViewManipulationFinished(this,0);
 	(this->*_tapfunctions[(int32)this->_stackviewstate])();
 	StackViewTranformChanged(this);
+	Canvas::SetZIndex(this , 100);
 	//_numberoftouches = 0 ;
 }
 
@@ -265,18 +269,17 @@ void IControls::StackView::IStackView::ItemsGrid_ManipulationStarted(Platform::O
 		StackViewManipulationFinished(this, 0);
 
 	_tempwidth = this->_currentscale * this->_itemwidth ;
+	Canvas::SetZIndex(this , 100);
+	_isinertia =false ;
+	_ismanipulating = true ;
 }
 
 void IControls::StackView::IStackView::ItemsGrid_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e)
 {   
-	if(this->_numberoftouches >= 2)
+	if(this->_numberoftouches >= 2 || _isinertia)
 	{
-		/**if(e->IsInertial)
-			{
-				e->Complete();
-				e->Handled = true ;
-			}
-			*/
+		 
+		_isinertia = true ;
 		if(_stackmanipulatiotype == StackManipulationType::StackManipulation)
 		{ 
 			StackViewManipulationStarted(this, 0 ); //type stackmanipulation
@@ -353,14 +356,20 @@ void IControls::StackView::IStackView::ItemsGrid_ManipulationCompleted_1(Platfor
 	StackViewManipulationFinished(this,0);
 	_stackmanipulatiotype = StackManipulationType::StackManipulation ;
 	this->_cananimate = false ;
+	_isinertia = false ;
 	this->_numberoftouches = 0 ;
 	StackViewTranformChanged(this);
+	Canvas::SetZIndex(this , 1);
 }
 
 void IControls::StackView::IStackView::ItemsGrid_ManipulationInertiaStarting(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e)
 {
-	if(_cananimate)
-		e->TranslationBehavior->DesiredDisplacement = 1 ;
+	if(_isinertia)
+	{
+		e->TranslationBehavior->DesiredDeceleration = 300.0 * 96.0 / (1000.0 * 1000.0);
+		e->ExpansionBehavior->DesiredDeceleration = 300.0 * 96.0 / (1000.0 * 1000.0); 
+		e->RotationBehavior->DesiredDeceleration = 300.0 * 96.0 / (1000.0 * 1000.0); 
+	}
 
 	//e->ExpansionBehavior->DesiredDeceleration = 3000.0 / (1000.0 * 1000.0);
 	/**if(_numberoftouches >=2 )

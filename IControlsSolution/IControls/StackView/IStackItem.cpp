@@ -101,7 +101,7 @@ void IStackItem::initprivatemethodsandvariables()
 void IStackItem::initanimationproperties()
 {
 	Windows::Foundation::TimeSpan ts;
-	ts.Duration = 3000000 ;
+	ts.Duration = 2500000 ;
 	Windows::UI::Xaml::Duration dur(ts) ;
 
 	this->_translatestory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
@@ -117,6 +117,7 @@ void IStackItem::initanimationproperties()
 	this->_rotatestory->Children->Append(_rotateanimation) ;	
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTarget(this->_rotateanimation, this->_itemtransform) ;
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(this->_rotateanimation , "Rotation") ; 
+	this->_translatestory->Completed += ref new EventHandler<Platform::Object^>(this, &IControls::StackView::IStackItem::Storyboard_Completed_1);
 }
 
 #pragma endregion
@@ -149,7 +150,7 @@ void IStackItem::AnimateTo(float64 _x, float64 _y ,float64 _scale)
 
 void IControls::StackView::IStackItem::Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e)
 {
-	this->_numberoftouches =0 ;
+	this->_numberoftouches = 0 ;
 	if(this->_itemtransform->ScaleX < 1.5)
 		ZIndex = 1 ;
 }
@@ -157,7 +158,7 @@ void IControls::StackView::IStackItem::Storyboard_Completed_1(Platform::Object^ 
 void IStackItem::inititemanimationstory()
 {
 	Windows::Foundation::TimeSpan ts;
-	ts.Duration = 3000000 ;
+	ts.Duration = 1750000 ;
 	Windows::UI::Xaml::Duration duration(ts) ;
 	
 	_translatestory1 = ref new Windows::UI::Xaml::Media::Animation::Storyboard() ;

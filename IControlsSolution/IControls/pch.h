@@ -11,5 +11,9 @@
 #include "StackView\IStackItem.h"
 #include "StackView\IStackView.h"
 
+#include "SliderView\ItemViewerContent.h"
+#include "SliderView\ItemViewer.h"
+#include "SliderView\SlideViewer.h"
+
 #include "IStackScroll.h"
 

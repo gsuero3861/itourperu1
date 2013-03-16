@@ -5,6 +5,7 @@
 
 #include "pch.h"
 #include "MainPage.xaml.h"
+#include "TestPage.xaml.h"
 
 using namespace IControls;
 

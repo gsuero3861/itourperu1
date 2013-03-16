@@ -177,7 +177,7 @@ namespace IControls
 			int32 _numberofitems, _numberoftouches ;
 			float64 _currentscale ;
 			float64 _angles[3] ;
-			bool _cananimate  ;
+			bool _cananimate, _isinertia , _ismanipulating;
 			float64 _constantdelta ; //to scroll 
 			float64 _tempwidth ;
 

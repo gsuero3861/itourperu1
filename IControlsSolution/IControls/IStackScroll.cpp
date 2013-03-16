@@ -167,7 +167,8 @@ void IControls::IStackScroll::StackViewClose_1(Platform::Object^ sender, int32 _
 
 void IControls::IStackScroll::Panel_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e)
 {
-	  float64 x ;
+	float64 x ;
+	
 	//if(_scrolltouches == ScrollStackTouches::One &&  _scrollmanipulationstate == ScrollManipulationState::Enable) this->_numberoftouches <= 1 &&
 	if(  _scrollmanipulationstate == ScrollManipulationState::Enable)
 	{
@@ -270,9 +271,9 @@ void IStackScroll::loaditems()
 	{
 		IStackView^ tmpstack = ref new IStackView();
 		tmpstack->ItemContentHeight = 180 ;
-		tmpstack->ItemContentWidth = 230 ;
+		tmpstack->ItemContentWidth = 240 ;
 		tmpstack->ItemHeight = 180 ;
-		tmpstack->ItemWidth = 300 ;
+		tmpstack->ItemWidth = 320 ;
 		tmpstack->StackWidth = 500 ;
 		tmpstack->ItemsList = _itemslist ;	
 		tmpstack->StackNumber = i ;

@@ -137,8 +137,14 @@
     <ClInclude Include="MainPage.xaml.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="SliderView\ItemViewer.h" />
+    <ClInclude Include="SliderView\ItemViewerContent.h" />
+    <ClInclude Include="SliderView\SlideViewer.h" />
     <ClInclude Include="StackView\IStackItem.h" />
     <ClInclude Include="StackView\IStackView.h" />
+    <ClInclude Include="TestPage.xaml.h">
+      <DependentUpon>TestPage.xaml</DependentUpon>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -148,6 +154,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="TestPage.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
@@ -211,8 +220,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SliderView\ItemViewer.cpp" />
+    <ClCompile Include="SliderView\ItemViewerContent.cpp" />
+    <ClCompile Include="SliderView\SlideViewer.cpp" />
     <ClCompile Include="StackView\IStackItem.cpp" />
     <ClCompile Include="StackView\IStackView.cpp" />
+    <ClCompile Include="TestPage.xaml.cpp">
+      <DependentUpon>TestPage.xaml</DependentUpon>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
