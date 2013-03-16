@@ -21,6 +21,9 @@ namespace IControls
 
 			event SlideViewerItemChangedEventHandler ^ SlideViewerItemChanged ;
 
+#pragma region  Properties
+
+		public:
 			property Windows::Foundation::Collections::IVector<Platform::String^>^ MediumPaths
 			{
 				void set(Windows::Foundation::Collections::IVector<Platform::String^>^ value)
@@ -117,6 +120,14 @@ namespace IControls
 		private:
 			Windows::Foundation::Collections::IVector<Platform::String^>^  _mediumpaths ;
 
+			float64 _controlwidth, _controlheight ;
+			float64 _itemwidth, _itemheight ;
+			float64 _minscale;
+			int32 _currentitem ;
+#pragma endregion 
+
+		private:
+			
 			Windows::UI::Xaml::Controls::StackPanel^ _itemspanel ;
 			Windows::UI::Xaml::Controls::StackPanel^ _scrollpanel ;
 			Windows::UI::Xaml::Controls::Grid^ _virtualitem_1 ;
@@ -127,11 +138,8 @@ namespace IControls
 			Windows::UI::Xaml::Media::Animation::DoubleAnimation^ _translateanimation ;
 			Windows::UI::Xaml::Media::Animation::Storyboard^ _translatestory ;
 
-			float64 _controlwidth, _controlheight ;
-			float64 _itemwidth, _itemheight ;
-			float64 _minscale;
 			float64 _currenttranslate;
-			int32  _numberofitems, _numberofpointers, _currentitem , _currentitemduplicate;
+			int32  _numberofitems, _numberofpointers,  _currentitemduplicate;
 			float64 _mintranslate, _maxtranslate;
 			float64 _initialtranslate, _finaltranslate ;
 		

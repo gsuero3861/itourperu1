@@ -15,12 +15,18 @@ namespace IControls
 	public enum class ScrollStackTouches
 	{ Zero, One, Many };
 
+	public delegate void StackScrollLockParentEventHandler(Platform::Object^ sender,  int32 _item);
+	public delegate void StackScrollUnlockParentEventHandler(Platform::Object^ sender,  int32 _item);
+
 	public ref class IStackScroll sealed : Windows::UI::Xaml::Controls::Grid
 	{
 	public :
 
 		IStackScroll();
 		void additem(Windows::UI::Xaml::Controls::Grid^ item);
+
+		event StackScrollLockParentEventHandler^ StackScrollLockParent ;
+		event StackScrollUnlockParentEventHandler^ StackScrollUnlockParent ;
 
 
 #pragma region Stack Scroll 
@@ -123,6 +129,7 @@ namespace IControls
 		void StackViewManipulationFinished(Platform::Object ^ sender , int32 _type);
 		void StackViewScrollTo(Platform::Object^ sender, float64 delta);
 		void StackView_TranformChanged(Platform::Object^ sender);
+		 
  
 		void Panel_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e);
 		void Panel_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
@@ -151,6 +158,15 @@ namespace IControls
 		void initpointerfunctions(); 
 
 #pragma endregion
+
+#pragma region Interaction 
+	private:
+
+		void StackView_FullScreenAnimationStarted(Platform::Object^ sender, int32 _stacknumber,int32 _itemnumber);///FULL SCREEN STARTED 
+		void StackView_FullScreenAnimationCompleted(Platform::Object^ sender, int32 _stacknumber,int32 _itemnumber);///FULL SCREEN COMPLETED
+#pragma endregion
+
+ 
 
 
 	};

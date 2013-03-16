@@ -30,8 +30,10 @@ TestPage::TestPage()
 		_paths->Append("ms-appx:///images/img"+ i +".png");
 	}
 
+	this->pscroll1->ItemsList = _paths ;
+
 	slider1->ItemHeight = 900 ;
-	slider1->ItemWidth = (900.0/800.0)* 1200;//1024  ;
+	slider1->ItemWidth = (900.0/800.0)* 1200; 
 	slider1->ControlHeight = 900 ;
 	slider1->ControlWidth = 1600 ;
 	slider1->MinScale = 0.9 ;

@@ -16,4 +16,6 @@
 #include "SliderView\SlideViewer.h"
 
 #include "IStackScroll.h"
+#include "PagedScrollItem.h"
+#include "PagedScroll.h"
 

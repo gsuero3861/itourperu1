@@ -38,7 +38,7 @@ void IStackScroll::initscrollcontrols()
 	this->Children->Append(this->_scrollgrid);
 	this->_panelstacks = ref new Windows::UI::Xaml::Controls::StackPanel();
 	this->_panelstacks->Orientation = Windows::UI::Xaml::Controls::Orientation::Horizontal ;
-	this->_panelstacks->Background = ref new SolidColorBrush(Windows::UI::Colors::BlanchedAlmond);
+	this->_panelstacks->Background = ref new SolidColorBrush(Windows::UI::Colors::Transparent);
 	this->_panelstacks->ManipulationMode = ManipulationModes::All ;
 	this->_scrollviewer = ref new Windows::UI::Xaml::Controls::ScrollViewer() ; 
 	this->_scrollviewer->HorizontalScrollMode = Windows::UI::Xaml::Controls::ScrollMode::Enabled;
@@ -85,7 +85,7 @@ void IStackScroll::initanimationproperties()
 
 #pragma region Stack Scroll Private Methods
 
-
+ 
 void IControls::IStackScroll::StackView_TranformChanged(Platform::Object^ sender)
 {
 	float64 _cumulativepos = 0.0 ;
@@ -113,11 +113,13 @@ void IControls::IStackScroll::StackViewScrollTo(Platform::Object^ sender, float6
 void IControls::IStackScroll::StackViewManipulationStarted_1(Platform::Object ^ sender , int32 _type)
 {
 	_scrollmanipulationstate = ScrollManipulationState::Dislable ; 
+	StackScrollLockParent(this, _selectedstack); ///Lock MainScroll
 }
 
 void IControls::IStackScroll::StackViewManipulationFinished(Platform::Object ^ sender , int32 _type)
 {
 	_scrollmanipulationstate = ScrollManipulationState::Enable ; 
+	//StackScrollUnlockParent(this, _selectedstack);
 }
 
 //when an stack is openned
@@ -198,6 +200,11 @@ void IControls::IStackScroll::Panel_ManipulationDelta_1(Platform::Object^ sender
 		} 
 		this->_currenttrnaslate = this->_paneltransform->TranslateX ;
 		_ismanipulating = true ;
+		if(this->_paneltransform->TranslateX > this->_initialtranslate + 70.0 || this->_paneltransform->TranslateX < this->_finaltranslate - 70.0)//this->_paneltransform->TranslateX > 100.0)
+		{
+			StackScrollUnlockParent(this, _selectedstack);
+			//e->Complete();
+		}
 	}
 	else
 	{
@@ -223,7 +230,7 @@ void IControls::IStackScroll::Panel_ManipulationCompleted_1(Platform::Object^ se
 	//this->_scrolltouches = ScrollStackTouches::Zero ;
 	//this->_numberoftouches = 0 ;
 	 _scrollmanipulationstate = ScrollManipulationState::Enable ;
-
+	 StackScrollLockParent(this, _selectedstack); //lock
 	 
 }
 	
@@ -283,6 +290,8 @@ void IStackScroll::loaditems()
 		tmpstack->StackViewManipulationFinished += ref new StackViewManipulationFinishedEventHandler(this, &IControls::IStackScroll::StackViewManipulationFinished);
 		tmpstack->StackViewScrollTo += ref new StackViewScrollToEventHandler(this,&IControls::IStackScroll::StackViewScrollTo );
 		tmpstack->StackViewTranformChanged += ref new StackViewTranformChangedEventHandler(this, &IControls::IStackScroll::StackView_TranformChanged);
+		tmpstack->StackViewFullScreenAnimationStarted += ref new StackViewFullScreenAnimationStartedEventHandler(this, &IControls::IStackScroll::StackView_FullScreenAnimationStarted);
+		tmpstack->StackViewFullScreenAnimationCompleted += ref new StackViewFullScreenAnimationCompletedEventHandler(this, &IControls::IStackScroll::StackView_FullScreenAnimationCompleted);
 		tmpstack->Background = ref new SolidColorBrush(Windows::UI::Colors::Transparent);
 		this->_panelstacks->Children->Append(tmpstack);
 	}
@@ -338,3 +347,20 @@ void IStackScroll::initpointerfunctions()
 }
 
 #pragma endregion
+
+
+#pragma region Interaction 
+
+///Stackanimation Started
+void IControls::IStackScroll::StackView_FullScreenAnimationStarted(Platform::Object^ sender, int32 _stacknumber,int32 _itemnumber)
+{
+}
+	
+//Stackanimation Completed
+void IControls::IStackScroll::StackView_FullScreenAnimationCompleted(Platform::Object^ sender, int32 _stacknumber,int32 _itemnumber)
+{
+}
+
+#pragma endregion
+
+ 

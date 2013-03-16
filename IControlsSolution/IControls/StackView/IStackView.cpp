@@ -213,6 +213,12 @@ void IStackView::initanimationproperties()
 
 #pragma region Event Handlers Functions
 
+void IControls::StackView::IStackView::StackItem_FullScreenAnimationCompleted(Platform::Object ^ sender )
+{
+	///Animation completed event
+	StackViewFullScreenAnimationCompleted(this, this->_stacknumber, this->_selecteditem);
+}
+
 void  IControls::StackView::IStackView::Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e)
 {
 	StackViewTranformChanged(this);
@@ -229,6 +235,7 @@ void IControls::StackView::IStackView::StackItem_Tapped(Platform::Object ^ sende
 		//Animate to full
 		((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ZIndex = 100 ;
 		AnimateToFullScreen();
+		StackViewFullScreenAnimationStarted(this, this->_stacknumber, this->_selecteditem);///full scren  animation started
 	}
 }
 
@@ -350,13 +357,17 @@ void IControls::StackView::IStackView::ItemsGrid_ManipulationCompleted_1(Platfor
 	{
 		if(((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->ItemTransform->ScaleX <= 2.5 )
 			((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->RestoreItem() ;
-		else
+		else ///HERE THROW THE ANIMATION STARTED
+		{
 			((IStackItem^)this->_itemsgrid->Children->GetAt(this->_selecteditem))->AnimateTo( this->_fullXposition - this->_begingrid->Width , this->FullYPosition ,  5.0 )  ; //this->_itemwidth , this->FullYPosition ,  5.0 ) ;
+			StackViewFullScreenAnimationStarted(this, this->_stacknumber, this->_selecteditem);
+		}
 	}
 	StackViewManipulationFinished(this,0);
 	_stackmanipulatiotype = StackManipulationType::StackManipulation ;
 	this->_cananimate = false ;
 	_isinertia = false ;
+	_ismanipulating = false ;
 	this->_numberoftouches = 0 ;
 	StackViewTranformChanged(this);
 	Canvas::SetZIndex(this , 1);
@@ -370,11 +381,7 @@ void IControls::StackView::IStackView::ItemsGrid_ManipulationInertiaStarting(Pla
 		e->ExpansionBehavior->DesiredDeceleration = 300.0 * 96.0 / (1000.0 * 1000.0); 
 		e->RotationBehavior->DesiredDeceleration = 300.0 * 96.0 / (1000.0 * 1000.0); 
 	}
-
-	//e->ExpansionBehavior->DesiredDeceleration = 3000.0 / (1000.0 * 1000.0);
-	/**if(_numberoftouches >=2 )
-		e->ExpansionBehavior->DesiredExpansion = 0.001 ; //DesiredDeceleration = 10.1 * 96 / (1000.0 * 1000.0);*/
-	//StackViewManipulationFinished(this, 0);
+	 
 }
 
 void IControls::StackView::IStackView::ItemsGrid_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)

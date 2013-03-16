@@ -10,7 +10,9 @@
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         
-        <slider:SlideViewer x:Name="slider1"></slider:SlideViewer>
+        <local:PagedScroll x:Name="pscroll1"></local:PagedScroll>
+        
+        <slider:SlideViewer x:Name="slider1" Visibility="Collapsed" ></slider:SlideViewer>
         
         <Grid x:ConnectionId='1' Width="300" Height="300" Background="AliceBlue" ManipulationMode="All" Visibility="Collapsed"
                                                                                                                

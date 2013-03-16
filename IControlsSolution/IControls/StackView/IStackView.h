@@ -27,6 +27,8 @@ namespace IControls
 		public delegate void StackViewCloseEventHandler(Platform::Object^ sender, int32 _stacknumber , float64 _scroll  );
 		public delegate void StackViewScrollToEventHandler(Platform::Object^ sender, float64 delta);
 		public delegate void StackViewTranformChangedEventHandler(Platform::Object^ sender);
+		public delegate void StackViewFullScreenAnimationStartedEventHandler(Platform::Object^ sender, int32 _stacknumber,int32 _itemnumber);///FULL SCREEN STARTED 
+		public delegate void StackViewFullScreenAnimationCompletedEventHandler(Platform::Object^ sender, int32 _stacknumber,int32 _itemnumber);///FULL KSCREEN COMPLETED
 
 		[Windows::Foundation::Metadata::WebHostHidden]
 		public ref class IStackView sealed : public Windows::UI::Xaml::Controls::Grid 
@@ -39,7 +41,8 @@ namespace IControls
 			event StackViewManipulationFinishedEventHandler^ StackViewManipulationFinished ;
 			event StackViewScrollToEventHandler^ StackViewScrollTo ;
 			event StackViewTranformChangedEventHandler^ StackViewTranformChanged ;
-
+			event StackViewFullScreenAnimationStartedEventHandler^ StackViewFullScreenAnimationStarted ;///FULL SCREEN STARTED 
+			event StackViewFullScreenAnimationCompletedEventHandler^ StackViewFullScreenAnimationCompleted ;///FULL SCREEN completed
 #pragma region Controls
 
 		private:
@@ -231,6 +234,7 @@ namespace IControls
 
 			void StackItemSelected_1(Platform::Object ^ sender , int32 _currentitem);
 			void StackItem_Tapped(Platform::Object ^ sender , int32 _currentitem);
+			void StackItem_FullScreenAnimationCompleted(Platform::Object ^ sender );
 
 			void Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e);
 #pragma endregion

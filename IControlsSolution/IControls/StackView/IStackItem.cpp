@@ -153,6 +153,8 @@ void IControls::StackView::IStackItem::Storyboard_Completed_1(Platform::Object^ 
 	this->_numberoftouches = 0 ;
 	if(this->_itemtransform->ScaleX < 1.5)
 		ZIndex = 1 ;
+	else
+		StackItemFullScreenAnimationCompleted(this);
 }
 
 void IStackItem::inititemanimationstory()
