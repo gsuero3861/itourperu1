@@ -129,6 +129,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DataSource\BindableBase.h" />
     <ClInclude Include="IStackScroll.h" />
     <ClInclude Include="PagedScroll.h" />
     <ClInclude Include="PagedScrollItem.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="App.xaml.cpp">
       <DependentUpon>App.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="DataSource\BindableBase.cpp" />
     <ClCompile Include="IStackScroll.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>

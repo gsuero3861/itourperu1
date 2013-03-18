@@ -8,6 +8,12 @@
 #include <collection.h>
 #include "App.xaml.h"
 
+#include "DataSource\BindableBase.h"
+#include "DataSource\PageDataSource.h"
+#include "DataSource\SectionDataSource.h"
+#include "DataSource\ChapterDataSource.h"
+#include "DataSource\BookDataSource.h"
+
 #include "StackView\IStackItem.h"
 #include "StackView\IStackView.h"
 

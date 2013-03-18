@@ -25,9 +25,7 @@ IScrollView::IScrollView()
 #pragma region Controls
  
 void IScrollView::initIscrollcontrols()
-{
-	//this->_manipulationstate =  IScrollManipulationState::Dislable ;
-
+{  
 	this->_ipanel =  ref new StackPanel();
 	this->_ipanel->Orientation = Orientation::Horizontal ;
 	this->_ipanel->Background = ref new SolidColorBrush(Windows::UI::Colors::Transparent);
@@ -71,8 +69,7 @@ void IControls::ScrollView::IScrollView::IPanel_PointerReleased_1(Platform::Obje
 {}
 	
 void  IControls::ScrollView::IScrollView::IPanel_ManipulationStarted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationStartedRoutedEventArgs^ e)
-{
-	//this->_maxcumulative  = ( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ; 
+{ 
 	if(_currentitem > 0)
 		this->_maxptranslate = ( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth ) / 2 ; 
 	else
@@ -95,8 +92,7 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationDelta_1(Platform::O
 		{ 
 			x = fmod( abs(this->_finaltranslate -  _currenttranslate), abs(this->_finaltranslate)) ;
 			if(x > 0)
-				x_factor = 5.0 / x ;
-				//_currentdelta = e->Delta.Translation.X /( ( x + 1 )  * 5);
+				x_factor = 5.0 / x ; 
 
 		}else
 		{
@@ -114,7 +110,7 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationDelta_1(Platform::O
 		}
 		else
 		{
-			if(x < 100.0 ) // && this->_cumulative <=  this->_scrollwidth)
+			if(x < 100.0 ) 
 			{
 				this->_paneltransform->TranslateX += (e->Delta.Translation.X * x_factor); ///_currentdelta ; 
 			}
@@ -159,23 +155,8 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationCompleted_1(Platfor
 			this->_panelstory->Begin();
 		}
 	}
-
-
-	
- 
-	_cumulative = 0.0;
-	/**
-	if(_currentitem > 0)
-		this->_maxptranslate = ( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth ) / 2 ; 
-	else
-		this->_maxptranslate =  10000.0 ;
-
-	if(_currentitem < this->_numberofitems - 1 )
-		this->_maxntranslate = -1 * (((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem + 1 ))->ItemWidth ) / 2 ; 
-	else
-		this->_maxntranslate =  -10000.0 ; 
-	_temptranslate = this->_paneltransform->TranslateX ;
- */
+	 
+	_cumulative = 0.0; 
 }
 	
 void  IControls::ScrollView::IScrollView::IPanel_ManipulationInertiaStarting_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e)
@@ -253,41 +234,7 @@ void IScrollView::tempinit()
 		this->_maxntranslate =  -10000.0 ; 
 	_temptranslate = this->_paneltransform->TranslateX ;
 	 
-	/*
-	IScrollItem^ item1 =  ref new IScrollItem();
-	item1->ItemsList =  this->_itemslist ;
-	item1->ItemNumber = 0 ;
-	item1->ItemHeight = 900 ;
-	item1->ItemWidth = 1600;
-	item1->Background =  ref new SolidColorBrush(Windows::UI::Colors::Azure);
-	item1->IScrollItemLockParent +=  ref new IScrollItemLockParentEventHandler(this, &IControls::IScroll::IScroll_ItemLockParent);
-	item1->IScrollItemUnlockParent +=  ref new IScrollItemUnlockParentEventHandler(this, &IControls::IScroll::IScroll_ItemUnlockParent);
-	this->_ipanel->Children->Append(item1);
-
-
-	IScrollItem^ item2 =  ref new IScrollItem();
-	item2->ItemsList =  this->_itemslist ;
-	item2->ItemNumber = 0 ;
-	item2->ItemHeight = 900 ;
-	item2->ItemWidth = 1600;
-	item2->Background =  ref new SolidColorBrush(Windows::UI::Colors::GreenYellow);
-	item2->IScrollItemLockParent +=  ref new IScrollItemLockParentEventHandler(this, &IControls::IScroll::IScroll_ItemLockParent);
-	item2->IScrollItemUnlockParent +=  ref new IScrollItemUnlockParentEventHandler(this, &IControls::IScroll::IScroll_ItemUnlockParent);
-	this->_ipanel->Children->Append(item2);
-
-	IScrollItem^ item3 =  ref new IScrollItem();
-	item3->ItemsList =  this->_itemslist ;
-	item3->ItemNumber = 0 ;
-	item3->ItemHeight = 900 ;
-	item3->ItemWidth = 1600;
-	item3->Background =  ref new SolidColorBrush(Windows::UI::Colors::Azure);
-	item3->IScrollItemLockParent +=  ref new IScrollItemLockParentEventHandler(this, &IControls::IScroll::IScroll_ItemLockParent);
-	item3->IScrollItemUnlockParent +=  ref new IScrollItemUnlockParentEventHandler(this, &IControls::IScroll::IScroll_ItemUnlockParent);
-	this->_ipanel->Children->Append(item3);
- */ 
-
-	//this->_finaltranslate = -1 * 1600 * 2 ;
-	
+ 
 }
 
 #pragma endregion

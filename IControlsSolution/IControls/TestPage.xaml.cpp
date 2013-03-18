@@ -39,6 +39,7 @@ TestPage::TestPage()
 	slider1->MinScale = 0.9 ;
 	slider1->CurrentItem = 5 ;
 	slider1->MediumPaths = _paths ;
+
 }
 
 /// <summary>
