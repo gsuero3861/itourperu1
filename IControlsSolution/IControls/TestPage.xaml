@@ -4,13 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:IControls"
     xmlns:slider="using:IControls.SliderView"
+    xmlns:scrollview="using:IControls.ScrollView"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
     <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}">
         
-        <local:PagedScroll x:Name="pscroll1"></local:PagedScroll>
+        <scrollview:IScrollView  ></scrollview:IScrollView>
+        
+        <local:PagedScroll x:Name="pscroll1" Visibility="Collapsed"></local:PagedScroll>
         
         <slider:SlideViewer x:Name="slider1" Visibility="Collapsed" ></slider:SlideViewer>
         

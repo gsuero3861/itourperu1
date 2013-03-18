@@ -20,6 +20,7 @@
             
         </Grid>
         
+        
         <Grid Width="900" Height="600" Background="AliceBlue" Visibility="Collapsed">
             <Grid Width="300" HorizontalAlignment="Left" Background="Beige">
                 <Grid.RowDefinitions>

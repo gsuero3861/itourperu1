@@ -19,3 +19,6 @@
 #include "PagedScrollItem.h"
 #include "PagedScroll.h"
 
+#include "ScrollView\IScrollViewItem.h"
+#include "ScrollView\IScrollView.h"
+
