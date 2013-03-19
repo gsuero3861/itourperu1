@@ -20,10 +20,12 @@ namespace IControls
 
 	protected:
 		virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
-	private:
-		void Grid_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e);
-		void Grid_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
-		void Grid_ManipulationInertiaStarting_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e);
+	private: 
 		Platform::Collections::Vector<Platform::String^>^_paths;
+		void loaddatasource();
+		DataSource::SectionDataSource ^_section1 ;
+		DataSource::ChapterDataSource ^_chapter1 ;
+		DataSource::BookDataSource ^ _book1 ;
+		Platform::Collections::Vector<DataSource::ChapterDataSource^> ^ _chapters ;
 	};
 }

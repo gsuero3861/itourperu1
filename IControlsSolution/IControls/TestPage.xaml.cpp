@@ -7,6 +7,7 @@
 #include "TestPage.xaml.h"
 
 using namespace IControls;
+using namespace IControls::DataSource ;
 
 using namespace Platform;
 using namespace Windows::Foundation;
@@ -25,21 +26,21 @@ TestPage::TestPage()
 {
 	InitializeComponent();
 	_paths = ref new Platform::Collections::Vector<Platform::String^>();
-	for (int i = 0; i < 8; i++)
+	for (int i = 11; i < 33; i++)
 	{
-		_paths->Append("ms-appx:///images/img"+ i +".png");
-	}
+		_paths->Append("ms-appx:///images/mybook/Image000"+ i +".png");
+	}  
+	loaddatasource(); 
+	//stackview1->StackDataSource = _section1 ;
 
-	this->pscroll1->ItemsList = _paths ;
+	//stackscroll1->ScrollWidth = 1600 ;
+	//stackscroll1->ScrollHeight = 900 ;
+	//stackscroll1->ChapterSource = _chapter1 ; 
+	//pagedscroll1->ChaptersList = _chapters ;
 
-	slider1->ItemHeight = 900 ;
-	slider1->ItemWidth = (900.0/800.0)* 1200; 
-	slider1->ControlHeight = 900 ;
-	slider1->ControlWidth = 1600 ;
-	slider1->MinScale = 0.9 ;
-	slider1->CurrentItem = 5 ;
-	slider1->MediumPaths = _paths ;
-
+	bookviewer1->BookHeight = 900 ;
+	bookviewer1->BookWidth = 1600 ;
+	bookviewer1->BookSource = _book1 ;
 }
 
 /// <summary>
@@ -52,27 +53,58 @@ void TestPage::OnNavigatedTo(NavigationEventArgs^ e)
 	(void) e;	// Unused parameter
 }
 
-
-void IControls::TestPage::Grid_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e)
+void TestPage::loaddatasource()
 {
-	transform1->TranslateX = 0.0 ;
-	transform1->TranslateY = 0.0 ;
-	transform1->ScaleX = 1.0 ;
-	transform1->ScaleY = 1.0 ;
-}
+	SectionDataSource^ _section3 = ref new SectionDataSource();
+	_section1 = ref new SectionDataSource();
+	_section1->Title = "Section1" ;
+	Platform::Collections::Vector<PageDataSource^>^ _pages1 =  ref new Platform::Collections::Vector<PageDataSource^> () ;
+	for (int i = 1; i <= 7; i++)
+	{
+		PageDataSource^ page1 = ref new PageDataSource();
+		page1->ThumbSource = "ms-appx:///images/tmp/thumb"+ i +".png" ;
+		page1->FullSource = "ms-appx:///images/tmp/thumb"+ i +".png" ;
+		_pages1->Append(page1);
+	}
+	_section1->Pages = _pages1 ;
+	_section3->Pages = _pages1 ;
+
+	SectionDataSource^ _section2 = ref new SectionDataSource();
+	SectionDataSource^ _section4 = ref new SectionDataSource();
+	_section1->Title = "Section1" ;
+	Platform::Collections::Vector<PageDataSource^>^ _pages2 =  ref new Platform::Collections::Vector<PageDataSource^> () ;
+	for (int i = 1; i <= 7; i++)
+	{
+		PageDataSource^ page1 = ref new PageDataSource();
+		page1->ThumbSource = "ms-appx:///images/tmp/thumb"+ i +".png" ;
+		page1->FullSource = "ms-appx:///images/tmp/thumb"+ i +".png" ;
+		_pages2->Append(page1);
+	}
+	_section2->Pages = _pages2 ;
+	_section4->Pages = _pages2 ;
+
+	Platform::Collections::Vector<SectionDataSource^>^ _sections =  ref new Platform::Collections::Vector<SectionDataSource^> () ;
+	_chapter1 = ref new ChapterDataSource();
+	_chapter1->Title = "Chapter 1";
+	_sections->Append(_section1);
+	_sections->Append(_section2);
+	_sections->Append(_section3);
+	_sections->Append(_section4);
+	_chapter1->Sections = _sections ;
+
+	ChapterDataSource^_chapter2 = ref new ChapterDataSource();
+	ChapterDataSource^_chapter3 = ref new ChapterDataSource();
+	_chapter2->Sections = _sections ;
+	_chapter3->Sections = _sections ;
+
+	_chapters =  ref new Platform::Collections::Vector<DataSource::ChapterDataSource^>();
+	_chapters->Append(_chapter1);
+	_chapters->Append(_chapter2);
+	_chapters->Append(_chapter3);
 
 
-void IControls::TestPage::Grid_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e)
-{
-	transform1->TranslateX += e->Delta.Translation.X ;
-	transform1->TranslateY += e->Delta.Translation.Y ;
-	transform1->ScaleX *= e->Delta.Scale ;
-	transform1->ScaleY *= e->Delta.Scale ;
-}
+	_book1 = ref new BookDataSource();
+	_book1->Title = "title 1" ;
+	_book1->Chapters = _chapters ;
 
-
-void IControls::TestPage::Grid_ManipulationInertiaStarting_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e)
-{
-	e->TranslationBehavior->DesiredDeceleration = 300.0 * 96.0 / (1000.0 * 1000.0);
-	e->ExpansionBehavior->DesiredDeceleration = 400.0 * 96.0 / (1000.0 * 1000.0); 
 }

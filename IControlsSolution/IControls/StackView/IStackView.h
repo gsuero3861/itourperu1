@@ -51,6 +51,8 @@ namespace IControls
 			Windows::UI::Xaml::Controls::Grid^ _begingrid ;
 			Windows::UI::Xaml::Controls::Grid^ _endgrid ;
 			void initcontrols();
+
+			void loadatsource();
 #pragma endregion
 
 #pragma region Public Properties
@@ -145,7 +147,18 @@ namespace IControls
 				float64 get(){ return this->_currentscale ;}
 			} 
 
+			property DataSource::SectionDataSource^ StackDataSource
+			{
+				void set(DataSource::SectionDataSource^ value)
+				{
+					this->_datasource = value ; 
+					loadatsource();
+				}
+				DataSource::SectionDataSource^ get(){return _datasource ;}
+			}
+
 		private: 
+			DataSource::SectionDataSource^ _datasource ; 
 			float64 _stackwidth, _currentwidth ;
 			float64 _itemwidth, _itemheight ;
 			float64 _itemcontentwidth , _itemcontentheight ;

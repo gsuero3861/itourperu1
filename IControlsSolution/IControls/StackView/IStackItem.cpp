@@ -18,7 +18,7 @@ IStackItem::IStackItem()
 {
 	this->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Left ;
 	//this->ManipulationMode = ManipulationModes::All;
-	this->Background =  ref new SolidColorBrush(Windows::UI::Colors::Blue);
+	this->Background =  ref new SolidColorBrush(Windows::UI::Colors::Transparent);
 	Canvas::SetZIndex(this, 1);
 	inititemcontent();
 	initprivatemethodsandvariables();
@@ -57,7 +57,7 @@ void IStackItem::inititemcontent()
 {
 	this->_itemcontent = ref new Grid();
 	//this->_itemcontent->ManipulationMode = ManipulationModes::All;
-	this->_itemcontent->Background =  ref new SolidColorBrush(Windows::UI::Colors::Red);
+	this->_itemcontent->Background =  ref new SolidColorBrush(Windows::UI::Colors::Transparent);
 	this->Children->Append(this->_itemcontent);
 	
 	this->_itemcontent->PointerPressed += ref new PointerEventHandler(this,&IControls::StackView::IStackItem::ItemContent_PointerPressed_1 );
@@ -101,7 +101,7 @@ void IStackItem::initprivatemethodsandvariables()
 void IStackItem::initanimationproperties()
 {
 	Windows::Foundation::TimeSpan ts;
-	ts.Duration = 2500000 ;
+	ts.Duration = 3500000 ;
 	Windows::UI::Xaml::Duration dur(ts) ;
 
 	this->_translatestory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
@@ -110,7 +110,10 @@ void IStackItem::initanimationproperties()
 	this->_translatestory->Children->Append(this->_translateXanimation);
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTarget(this->_translateXanimation, this->_itemtransform) ;
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(this->_translateXanimation , "TranslateX") ;
-	
+	Windows::UI::Xaml::Media::Animation::QuinticEase ^ ease1 =  ref new Windows::UI::Xaml::Media::Animation::QuinticEase();
+	ease1->EasingMode = Windows::UI::Xaml::Media::Animation::EasingMode::EaseOut ;
+	this->_translateXanimation->EasingFunction = ease1 ;
+
 	this->_rotatestory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
 	this->_rotateanimation = ref new Windows::UI::Xaml::Media::Animation::DoubleAnimation(); ;	
 	this->_rotateanimation->Duration = dur ;

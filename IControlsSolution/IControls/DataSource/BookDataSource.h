@@ -4,7 +4,7 @@ namespace IControls
 {
 	namespace DataSource
 	{
-		public ref class BookDataSource :  public BindableBase
+		public ref class BookDataSource  sealed :  public BindableBase	
 		{
 		public:
 			BookDataSource();
@@ -19,15 +19,15 @@ namespace IControls
 				Platform::String^ get(){ return this->_title ; }
 			} 
 
-			property Windows::Foundation::Collections::IVector<PageDataSource^>^ Chapters
+			property Windows::Foundation::Collections::IVector<ChapterDataSource^>^ Chapters
 			{
-				void set(Windows::Foundation::Collections::IVector<PageDataSource^>^ value){this->_chapters = value ; }
-				Windows::Foundation::Collections::IVector<PageDataSource^>^ get(){ return _chapters ; }
+				void set(Windows::Foundation::Collections::IVector<ChapterDataSource^>^ value){this->_chapters = value ; }
+				Windows::Foundation::Collections::IVector<ChapterDataSource^>^ get(){ return _chapters ; }
 			}
 
 		private:
 			Platform::String^ _title ; 
-			Windows::Foundation::Collections::IVector<PageDataSource^>^ _chapters ;
+			Windows::Foundation::Collections::IVector<ChapterDataSource^>^ _chapters ;
 			 
 #pragma endregion
 		};

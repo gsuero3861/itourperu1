@@ -54,6 +54,34 @@ void IStackView::initcontrols()
 	initanimationproperties();
 }
 
+
+void IStackView::loadatsource()
+{
+	this->_numberofitems = this->_datasource->Pages->Size ;
+	for (int i = 0; i < this->_numberofitems ; i++)
+	{
+		Image^ timage = ref new Image();
+		timage->Source =  ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(ref new Windows::Foundation::Uri( this->_datasource->Pages->GetAt(i)->ThumbSource ));
+		//timage->Width =  this->_itemcontentwidth ;
+		timage->Height = this->_itemcontentheight  ;
+		//timage->Stretch =  Windows::UI::Xaml::Media::Stretch:: ;
+		Grid^ tgrid =  ref new Grid();
+		tgrid->Children->Append(timage);
+		IStackItem^ titem = ref new IStackItem();
+		titem->ZIndex = 1 ;
+		titem->ItemWidth = this->_itemwidth ;
+		titem->ItemHeight =  this->_itemheight ;
+		titem->ItemContentWidth = this->_itemcontentwidth ;
+		titem->ItemContentHeight =  this->_itemcontentheight ;
+		titem->ItemNumber = i ;
+		float64 angle = this->_angles[i%3];
+		titem->InitialAngle = angle ;
+		titem->ItemContent = tgrid ;
+		titem->StackItemSelected += ref new StackItemSelectedEventHandler(this, &IControls::StackView::IStackView::StackItemSelected_1);
+		titem->StackItemTapped +=  ref new StackItemTappedEventHandler(this, &IControls::StackView::IStackView::StackItem_Tapped);
+		this->_itemsgrid->Children->Append(titem);
+	}
+}
 #pragma endregion
 
 
@@ -193,13 +221,16 @@ void IStackView::updatestackitems()
 void IStackView::initanimationproperties()
 {
 	Windows::Foundation::TimeSpan ts;
-	ts.Duration = 2500000 ;
+	ts.Duration = 3500000 ;
 	Windows::UI::Xaml::Duration duration(ts) ;
 
 	this->_itemsgridstory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
 	this->_itemgridanimation = ref new Windows::UI::Xaml::Media::Animation::DoubleAnimation();
 	this->_itemgridanimation->Duration = duration ;
 	this->_itemgridanimation->EnableDependentAnimation = true ;
+	Windows::UI::Xaml::Media::Animation::QuinticEase ^ ease1 =  ref new Windows::UI::Xaml::Media::Animation::QuinticEase();
+	ease1->EasingMode = Windows::UI::Xaml::Media::Animation::EasingMode::EaseOut ;
+	this->_itemgridanimation->EasingFunction = ease1 ;
 	this->_itemsgridstory->Children->Append(this->_itemgridanimation);
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(_itemgridanimation , "(Grid.Width)");
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTarget(_itemgridanimation , _itemsgrid);

@@ -41,8 +41,19 @@ namespace IControls
 			void set(int32 value){ this->_currentitem =  value ;}
 			int32 get(){return this->_currentitem ;}
 		}
+		
+		property Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ ChaptersList
+		{
+			void set( Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ value)
+			{
+				this->_datasource = value ; 
+				temploaddata();
+			}
+			Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ get(){ return this->_datasource ; }
+		}
 
 	private:
+		Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ _datasource ;
 		float64 _scrollwidth, _scrollheight ;
 		int32 _currentitem ;
 
@@ -94,7 +105,8 @@ namespace IControls
 
 	private :
 		 Windows::Foundation::Collections::IVector<Platform::String^>^ _itemslist;
-		void tempinit();
+		void tempinit() ;
+		void temploaddata();
 
 #pragma endregion
 

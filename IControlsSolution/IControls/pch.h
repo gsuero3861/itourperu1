@@ -7,6 +7,7 @@
 
 #include <collection.h>
 #include "App.xaml.h"
+#include "IControlsUtil.h"
 
 #include "DataSource\BindableBase.h"
 #include "DataSource\PageDataSource.h"
@@ -27,4 +28,6 @@
 
 #include "ScrollView\IScrollViewItem.h"
 #include "ScrollView\IScrollView.h"
+
+#include "BookViewer.h"
 

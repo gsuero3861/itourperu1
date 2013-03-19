@@ -129,7 +129,13 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BookViewer.h" />
     <ClInclude Include="DataSource\BindableBase.h" />
+    <ClInclude Include="DataSource\BookDataSource.h" />
+    <ClInclude Include="DataSource\ChapterDataSource.h" />
+    <ClInclude Include="DataSource\PageDataSource.h" />
+    <ClInclude Include="DataSource\SectionDataSource.h" />
+    <ClInclude Include="IControlsUtil.h" />
     <ClInclude Include="IStackScroll.h" />
     <ClInclude Include="PagedScroll.h" />
     <ClInclude Include="PagedScrollItem.h" />
@@ -208,12 +214,55 @@
     <Image Include="images\img8.png" />
     <Image Include="images\img9.jpg" />
     <Image Include="images\img9.png" />
+    <Image Include="images\mybook\Image00011.png" />
+    <Image Include="images\mybook\Image00012.png" />
+    <Image Include="images\mybook\Image00013.png" />
+    <Image Include="images\mybook\Image00014.png" />
+    <Image Include="images\mybook\Image00015.png" />
+    <Image Include="images\mybook\Image00016.png" />
+    <Image Include="images\mybook\Image00017.png" />
+    <Image Include="images\mybook\Image00018.png" />
+    <Image Include="images\mybook\Image00019.png" />
+    <Image Include="images\mybook\Image00020.png" />
+    <Image Include="images\mybook\Image00021.png" />
+    <Image Include="images\mybook\Image00022.png" />
+    <Image Include="images\mybook\Image00023.png" />
+    <Image Include="images\mybook\Image00024.png" />
+    <Image Include="images\mybook\Image00025.png" />
+    <Image Include="images\mybook\Image00026.png" />
+    <Image Include="images\mybook\Image00027.png" />
+    <Image Include="images\mybook\Image00028.png" />
+    <Image Include="images\mybook\Image00029.png" />
+    <Image Include="images\mybook\Image00030.png" />
+    <Image Include="images\mybook\Image00031.png" />
+    <Image Include="images\mybook\Image00032.png" />
+    <Image Include="images\mybook\Image00033.png" />
+    <Image Include="images\mybook\Image00034.png" />
+    <Image Include="images\tmp\large1.png" />
+    <Image Include="images\tmp\large2.png" />
+    <Image Include="images\tmp\large3.png" />
+    <Image Include="images\tmp\large4.png" />
+    <Image Include="images\tmp\large5.png" />
+    <Image Include="images\tmp\large6.png" />
+    <Image Include="images\tmp\large7.png" />
+    <Image Include="images\tmp\thumb1.png" />
+    <Image Include="images\tmp\thumb2.png" />
+    <Image Include="images\tmp\thumb3.png" />
+    <Image Include="images\tmp\thumb4.png" />
+    <Image Include="images\tmp\thumb5.png" />
+    <Image Include="images\tmp\thumb6.png" />
+    <Image Include="images\tmp\thumb7.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="App.xaml.cpp">
       <DependentUpon>App.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="BookViewer.cpp" />
     <ClCompile Include="DataSource\BindableBase.cpp" />
+    <ClCompile Include="DataSource\BookDataSource.cpp" />
+    <ClCompile Include="DataSource\ChapterDataSource.cpp" />
+    <ClCompile Include="DataSource\PageDataSource.cpp" />
+    <ClCompile Include="DataSource\SectionDataSource.cpp" />
     <ClCompile Include="IStackScroll.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>

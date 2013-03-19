@@ -18,7 +18,7 @@ IScrollView::IScrollView()
 {
 	initIscrollcontrols();
 	initanimationproperties();
-	tempinit();
+	//tempinit();
 }
 
 
@@ -164,22 +164,25 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationInertiaStarting_1(P
 	//if(this->_manipulationstate == IScrollManipulationState::Enable)
 		//e->TranslationBehavior->DesiredDeceleration = 10.0 * 96.0 / (1000.0 * 1000.0);
 }
-
-
+ 
 #pragma endregion
+
 
 #pragma region  Animations
  
 void IScrollView::initanimationproperties()
 {
 	Windows::Foundation::TimeSpan ts;
-	ts.Duration = 1500000 ;
+	ts.Duration = 2500000 ;
 	Windows::UI::Xaml::Duration duration(ts) ;
 
 	this->_panelstory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
 	this->_panelanimation = ref new Windows::UI::Xaml::Media::Animation::DoubleAnimation();
 	this->_panelanimation->Duration = duration ;
 	this->_panelstory->Children->Append(this->_panelanimation);
+	Windows::UI::Xaml::Media::Animation::CubicEase ^ ease1 = ref new Windows::UI::Xaml::Media::Animation::CubicEase();
+	ease1->EasingMode = Windows::UI::Xaml::Media::Animation::EasingMode::EaseOut ;
+	//this->_panelanimation->EasingFunction = ref new Windows
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(_panelanimation , "TranslateX");
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTarget(_panelanimation , _paneltransform);
 }
@@ -192,18 +195,21 @@ void IScrollView::initanimationproperties()
 
 void IScrollView::tempinit()
 {
-	this->_scrollheight = 900 ;
-	this->_scrollwidth = 1600 ;
+	float64 _h = 900 ;
+	float64 _w = 1600 ;
+	this->_scrollheight = _h ;
+	this->_scrollwidth = _w ;
 	this->_currentitem = 0 ;
-	this->_numberofitems = 10 ;
+	this->_numberofitems = _itemslist->Size ;
 	
 	float64 ftranslate = 0.0 ;
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < _itemslist->Size; i++)
 	{
 		IScrollViewItem ^ item1  = ref new IScrollViewItem();
-		item1->Height = 900 ;
-		if(i==1 || i==5 || i==9)
+		item1->Height = _h ;
+		item1->ItemWidth = 1200 ;
+		/**if(i==1 || i==5 || i==9)
 			item1->ItemWidth = 1600 ;
 		else
 			item1->ItemWidth = 1200 ;
@@ -211,16 +217,18 @@ void IScrollView::tempinit()
 		if(i%2 > 0)
 			item1->Background = ref new SolidColorBrush(Windows::UI::Colors::Azure);
 		else
-			item1->Background = ref new SolidColorBrush(Windows::UI::Colors::GreenYellow);
+			item1->Background = ref new SolidColorBrush(Windows::UI::Colors::GreenYellow);*/
 		ftranslate += item1->ItemWidth ;
+
+		item1->Source = _itemslist->GetAt(i);
 		this->_ipanel->Children->Append(item1);
 	}
 
-	this->_finaltranslate = -1 * ( ftranslate - 800 - ((IScrollViewItem^)_ipanel->Children->GetAt(9))->ItemWidth / 2  ) ;
-	this->_initialtranslate = (1600 - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
+	this->_finaltranslate = -1 * ( ftranslate - _w/2 - ((IScrollViewItem^)_ipanel->Children->GetAt(9))->ItemWidth / 2  ) ;
+	this->_initialtranslate = (_w - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
 
 	
-	this->_paneltransform->TranslateX = (1600 - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
+	this->_paneltransform->TranslateX = (_w - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
 
 
 	if(_currentitem > 0)

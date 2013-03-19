@@ -2,6 +2,17 @@
 
 using namespace IControls;
 
+using namespace Platform;
+using namespace Windows::Foundation;
+using namespace Windows::Foundation::Collections;
+using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Controls;
+using namespace Windows::UI::Xaml::Controls::Primitives;
+using namespace Windows::UI::Xaml::Data;
+using namespace Windows::UI::Xaml::Input;
+using namespace Windows::UI::Xaml::Media;
+using namespace Windows::UI::Xaml::Navigation;
+
 PagedScrollItem::PagedScrollItem()
 {
 	this->initcontrols();
@@ -34,6 +45,19 @@ void IControls::PagedScrollItem::StackScroll_UnlockParent(Platform::Object^ send
 
 
 #pragma region Stack Scroll Temporal Data Load
+
+void PagedScrollItem::loadchapter()
+{
+	_stackscroll  = ref new IStackScroll();
+	//_stackscroll->ItemsList =  this->_itemslist ;
+	_stackscroll->ChapterSource = _datasource ;
+	_stackscroll->ScrollHeight = 900 ;
+	_stackscroll->ScrollWidth = 1600 ;
+	_stackscroll->StackScrollLockParent +=  ref new StackScrollLockParentEventHandler(this, &IControls::PagedScrollItem::StackScroll_LockParent);
+	_stackscroll->StackScrollUnlockParent +=  ref new StackScrollUnlockParentEventHandler(this, &IControls::PagedScrollItem::StackScroll_UnlockParent);
+	this->_stackscrollgrid->Children->Append(_stackscroll);
+	 
+}
  
 void PagedScrollItem::loaditems()
 {

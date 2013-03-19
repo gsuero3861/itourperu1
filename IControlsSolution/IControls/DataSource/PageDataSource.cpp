@@ -5,6 +5,5 @@ using namespace IControls::DataSource ;
 PageDataSource::PageDataSource()
 {
 	this->_fullsource = "" ;
-	this->_thumbsource = "" ;
-	this->_mediumsource = "" ;
+	this->_thumbsource = "" ; 
 }

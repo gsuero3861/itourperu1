@@ -126,7 +126,7 @@ namespace IControls
 				void set(float64 value)
 				{ 
 					this->_itemcontentwidth =  value ; 
-					_itemcontent->Width = value ;
+					//_itemcontent->Width = value ;
 				}
 				float64 get(){ return this->_itemcontentwidth ;}
 			}

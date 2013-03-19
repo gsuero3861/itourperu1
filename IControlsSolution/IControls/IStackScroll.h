@@ -51,12 +51,26 @@ namespace IControls
 			void set(Windows::Foundation::Collections::IVector<Platform::String^>^ value)
 			{
 				this->_itemslist = value ;
-				loaditems();
+				//loaditems();
 			}
 			Windows::Foundation::Collections::IVector<Platform::String^>^ get(){ return this->_itemslist ; }
 		}
 
+		 
+		property DataSource::ChapterDataSource^ ChapterSource
+		{
+			void set(DataSource::ChapterDataSource^ value)
+			{
+				this->_datasource = value ;
+				loadchapter();
+			}
+			DataSource::ChapterDataSource^ get(){ return _datasource ; }
+		} 
+	
 	private:
+		DataSource::ChapterDataSource^ _datasource ;
+		void loadchapter();
+
 		Windows::Foundation::Collections::IVector<Platform::String^>^ _itemslist ;
 		void loaditems();
 #pragma endregion
@@ -99,7 +113,7 @@ namespace IControls
 		}
 
 	private:
-
+		
 
 #pragma endregion
 

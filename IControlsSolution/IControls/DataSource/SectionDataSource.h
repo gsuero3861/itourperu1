@@ -4,7 +4,7 @@ namespace IControls
 {
 	namespace DataSource
 	{
-		public ref class SectionDataSource :  public BindableBase
+		public ref class SectionDataSource sealed  :  public BindableBase
 		{
 		public:
 			SectionDataSource();

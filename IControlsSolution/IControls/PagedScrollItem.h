@@ -43,9 +43,17 @@ namespace IControls
 			int32 get(){return this->_itemnumber ;}
 		}
 
-		
-
+		property DataSource::ChapterDataSource^ ChapterSource
+		{
+			void set(DataSource::ChapterDataSource^ value)
+			{
+				this->_datasource = value ;
+				loadchapter();
+			}
+			DataSource::ChapterDataSource^ get(){ return _datasource ; }
+		}   
 	private:
+		DataSource::ChapterDataSource^ _datasource ;
 		float64 _itemwidth, _itemheight ;
 		int32 _itemnumber ;
 
@@ -84,6 +92,8 @@ namespace IControls
 	private:
 		Windows::Foundation::Collections::IVector<Platform::String^>^ _itemslist ;
 		void loaditems();
+
+		void loadchapter();
 
 #pragma endregion
 

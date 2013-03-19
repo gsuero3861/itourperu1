@@ -76,7 +76,7 @@ void  IControls::PagedScroll::PagedPanel_ManipulationStarted_1(Platform::Object^
 	
 void  IControls::PagedScroll::PagedPanel_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e)
 {
-	float64  x , _currentdelta, _currenttranslate  =  this->_paneltransform->TranslateX;
+	float64  x , x_factor = 1.0 ,  _currentdelta = 1.0 , _currenttranslate  =  this->_paneltransform->TranslateX;
 	if(abs(_cumulative) > this->_scrollwidth )
 	{
 		e->Complete();
@@ -89,11 +89,13 @@ void  IControls::PagedScroll::PagedPanel_ManipulationDelta_1(Platform::Object^ s
 		{ 
 			x = fmod( abs(this->_finaltranslate -  _currenttranslate), abs(this->_finaltranslate)) ;
 			if(x > 0)
-				_currentdelta = e->Delta.Translation.X / ( x + 1 ) * 5 ;
-
-		}else
+				x_factor = 5.0 /(x + 1)	;
+				//_currentdelta = e->Delta.Translation.X / ( x + 1 ) * 5 ; 
+		}
+		else
 		{
-			_currentdelta = e->Delta.Translation.X ;
+			x_factor = 1.0 ;	;
+			//_currentdelta = e->Delta.Translation.X ;
 			x=1.0 ;
 		} 
 
@@ -101,13 +103,13 @@ void  IControls::PagedScroll::PagedPanel_ManipulationDelta_1(Platform::Object^ s
 
 		if(!e->IsInertial)
 		{
-			this->_paneltransform->TranslateX += _currentdelta ; 
+			this->_paneltransform->TranslateX += (e->Delta.Translation.X * x_factor);  //+= _currentdelta ; 
 		}
 		else
 		{
-			if(x < 100.0 && this->_cumulative <=  this->_scrollwidth)
+			if(x < 100.0 && abs(this->_cumulative) <=  this->_scrollwidth)
 			{
-				this->_paneltransform->TranslateX += _currentdelta ; 
+				this->_paneltransform->TranslateX += (e->Delta.Translation.X * x_factor) ; // += _currentdelta ; 
 			}
 			else
 				e->Complete(); 
@@ -145,12 +147,14 @@ void  IControls::PagedScroll::PagedPanel_ManipulationInertiaStarting_1(Platform:
 void PagedScroll::initanimationproperties()
 {
 	Windows::Foundation::TimeSpan ts;
-	ts.Duration = 1500000 ;
+	ts.Duration = 2500000 ;
 	Windows::UI::Xaml::Duration duration(ts) ;
 
 	this->_panelstory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
 	this->_panelanimation = ref new Windows::UI::Xaml::Media::Animation::DoubleAnimation();
 	this->_panelanimation->Duration = duration ;
+	Windows::UI::Xaml::Media::Animation::CubicEase ^ cease = ref new Windows::UI::Xaml::Media::Animation::CubicEase();
+	cease->EasingMode = Windows::UI::Xaml::Media::Animation::EasingMode::EaseOut ;
 	this->_panelstory->Children->Append(this->_panelanimation);
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(_panelanimation , "TranslateX");
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTarget(_panelanimation , _paneltransform);
@@ -161,6 +165,29 @@ void PagedScroll::initanimationproperties()
 
 #pragma region  DataLoad Temp
 
+void PagedScroll::temploaddata()
+{
+	this->_scrollheight = 900 ;
+	this->_scrollwidth = 1600 ;
+	this->_currentitem = 0 ;
+
+	for (int i = 0; i < _datasource->Size; i++)
+	{
+		PagedScrollItem^ item1 =  ref new PagedScrollItem();
+		//item1->ItemsList =  this->_itemslist ;
+		item1->ChapterSource = this->_datasource->GetAt(i);
+		item1->ItemNumber = 0 ;
+		item1->ItemHeight = 900 ;
+		item1->ItemWidth = 1600;
+		item1->Background =  ref new SolidColorBrush(Windows::UI::Colors::Azure);
+		item1->PagedScrollItemLockParent +=  ref new PagedScrollItemLockParentEventHandler(this, &IControls::PagedScroll::PagedScroll_ItemLockParent);
+		item1->PagedScrollItemUnlockParent +=  ref new PagedScrollItemUnlockParentEventHandler(this, &IControls::PagedScroll::PagedScroll_ItemUnlockParent);
+		this->_pagedpanel->Children->Append(item1);
+	}
+
+	this->_finaltranslate = -1 * _scrollwidth * (_datasource->Size - 1 ) ;
+	this->_initialtranslate = 0.0 ;
+}
 
 void PagedScroll::tempinit()
 {
