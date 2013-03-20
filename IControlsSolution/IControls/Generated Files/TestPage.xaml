@@ -21,8 +21,9 @@
         <local:PagedScroll x:Name="pagedscroll1" Visibility="Collapsed" > 
         </local:PagedScroll>
         
-        <local:BookViewer x:Name="bookviewer1"></local:BookViewer>
-               
+        <local:BookViewer x:Name="bookviewer1" Visibility="Collapsed" ></local:BookViewer>
+            
+        <scrollview:IScrollView x:Name="scrollview1"></scrollview:IScrollView>
         
     </Grid>
 </Page>

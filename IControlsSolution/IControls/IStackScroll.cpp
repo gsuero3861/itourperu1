@@ -204,6 +204,7 @@ void IControls::IStackScroll::Panel_ManipulationDelta_1(Platform::Object^ sender
 		} 
 		this->_currenttrnaslate = this->_paneltransform->TranslateX ;
 		_ismanipulating = true ;
+		
 		if(this->_paneltransform->TranslateX > this->_initialtranslate + 70.0 || this->_paneltransform->TranslateX < this->_finaltranslate - 70.0)//this->_paneltransform->TranslateX > 100.0)
 		{
 			StackScrollUnlockParent(this, _selectedstack);

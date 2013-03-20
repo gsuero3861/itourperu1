@@ -61,12 +61,17 @@ namespace IControls
 		private:
 			IScrollManipulationState _manipulationstate ; //State of manipualtion
 			float64 _initialtranslate, _finaltranslate ;
+			float64 _maxtranslate , _mintranslate , _maxthreshold , _minthreshold ; //_max : -1 min: +1 threshold is for animation
+ 
 			float64 _cumulative, _maxcumulative , _maxptranslate , _maxntranslate , _temptranslate ;
+			int32 _counter ;
 
 #pragma endregion
 
 #pragma region Private Methods
-		private:
+		private: 
+
+			void setscroll();
 		 
 			void IScroll_ItemLockParent(Platform::Object^ sender,  int32 _item);
 			void IScroll_ItemUnlockParent(Platform::Object^ sender,  int32 _item);
@@ -85,6 +90,56 @@ namespace IControls
 			Windows::UI::Xaml::Media::Animation::Storyboard^ _panelstory;
 			Windows::UI::Xaml::Media::Animation::DoubleAnimation^ _panelanimation ;
 			void initanimationproperties();
+			void Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e);
+
+#pragma endregion
+
+#pragma region Scroll Load & Update
+
+		public:
+			property Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ ChaptersList
+			{
+				void set(Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ value)
+				{
+					this->_chapterslist = value ; 
+					loadchapters();
+				}
+				Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ get(){ return this->_chapterslist ; }
+			}
+
+			property int32 CurrentChapter
+			{
+				void set(int32 value)
+				{ 
+					this->_currentchapter =  value ;
+					setscroll();
+				}
+				int32 get(){return this->_currentchapter ;}
+			}
+
+			property int32 CurrentSection
+			{
+				void set(int32 value){
+					this->_currentsection =  value ;
+					setscroll();
+				}
+				int32 get(){return this->_currentsection ;}
+			}
+
+			property int32 CurrentPage
+			{
+				void set(int32 value){
+					this->_currentpage =  value ;
+					setscroll();
+				}
+				int32 get(){return this->_currentpage ;}
+			}
+
+
+		private:
+			Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ _chapterslist;
+			int32 _currentchapter, _currentsection , _currentpage ;
+			void loadchapters();
 
 #pragma endregion
 
@@ -105,6 +160,8 @@ namespace IControls
 			void tempinit();
 
 #pragma endregion
+
+
 
 		};
 

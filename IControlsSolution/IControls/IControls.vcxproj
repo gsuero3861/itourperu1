@@ -129,6 +129,8 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationView.h" />
+    <ClInclude Include="AnimationViewItem.h" />
     <ClInclude Include="BookViewer.h" />
     <ClInclude Include="DataSource\BindableBase.h" />
     <ClInclude Include="DataSource\BookDataSource.h" />
@@ -254,6 +256,8 @@
     <Image Include="images\tmp\thumb7.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationView.cpp" />
+    <ClCompile Include="AnimationviewItem.cpp" />
     <ClCompile Include="App.xaml.cpp">
       <DependentUpon>App.xaml</DependentUpon>
     </ClCompile>

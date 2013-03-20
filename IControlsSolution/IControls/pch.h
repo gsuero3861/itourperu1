@@ -29,5 +29,9 @@
 #include "ScrollView\IScrollViewItem.h"
 #include "ScrollView\IScrollView.h"
 
+#include "AnimationViewItem.h"
+#include "AnimationView.h"
+
+
 #include "BookViewer.h"
 

@@ -16,9 +16,13 @@ using namespace Windows::UI::Xaml::Navigation;
 
 IScrollView::IScrollView()
 {
+	this->_currentchapter = 0 ;
+	this->_currentitem = 0 ;
+	this->_currentpage = 0 ;
+	this->_currentsection = 0 ;
 	initIscrollcontrols();
-	initanimationproperties();
-	//tempinit();
+	initanimationproperties(); 
+	_counter = 0  ;
 }
 
 
@@ -50,7 +54,26 @@ void IScrollView::initIscrollcontrols()
 #pragma endregion
 
 #pragma region Private Methods
+ 
+void IScrollView::setscroll()
+{
+	int32 _citem = 0 ;
+	for (int i = 0; i < _currentchapter; i++) 
+		for (int j = 0; j < _chapterslist->GetAt(i)->Sections->Size ; j++)
+		{
+			_citem += _chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->Size ;
+		} 
 
+	for (int i = 0; i < _currentsection; i++)
+	{
+		_citem += _chapterslist->GetAt(_currentchapter)->Sections->GetAt(i)->Pages->Size ;
+	}
+
+	_citem += _currentpage  ;
+	_currentitem = _citem ;
+	this->_paneltransform->TranslateX = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemPosition ;
+	
+}
 
 void IControls::ScrollView::IScrollView::IScroll_ItemLockParent(Platform::Object^ sender,  int32 _item)
 {
@@ -70,15 +93,47 @@ void IControls::ScrollView::IScrollView::IPanel_PointerReleased_1(Platform::Obje
 	
 void  IControls::ScrollView::IScrollView::IPanel_ManipulationStarted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationStartedRoutedEventArgs^ e)
 { 
-	if(_currentitem > 0)
-		this->_maxptranslate = ( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth ) / 2 ; 
+	//_cumulative = 0.0; 
+	_counter++ ;
+	if(_counter > 1)	
+	{
+		e->Complete();
+		e->Handled =  true ;
+		return ;
+	}
+	
+	if(_currentitem > 0 )
+	{
+		this->_maxtranslate = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemPosition ;
+		this->_maxthreshold = _paneltransform->TranslateX + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth / 3 ; 
+	}
+	else
+	{
+		this->_maxtranslate = this->_scrollwidth / 2 ;
+		this->_maxthreshold = this->_scrollwidth ;
+	}
+	if(_currentitem < this->_numberofitems - 1)
+	{
+		this->_mintranslate = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem + 1 ))->ItemPosition ;
+		this->_minthreshold = _paneltransform->TranslateX - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem + 1 ))->ItemWidth / 3 ;
+	}
+	else
+	{
+		this->_mintranslate = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_numberofitems - 1 ))->ItemPosition - this->_scrollwidth / 2 ;
+		this->_minthreshold = this->_finaltranslate - this->_scrollwidth ; 
+	}
+
+
+	/*
+	if(_currentitem > 0)//( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth ) / 2 ; 
+		this->_maxptranslate = ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth  ;
 	else
 		this->_maxptranslate =  10000.0 ;
 
-	if(_currentitem < this->_numberofitems - 1 )
-		this->_maxntranslate = -1 * (((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem + 1 ))->ItemWidth ) / 2 ; 
+	if(_currentitem < this->_numberofitems - 1 ) // (((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem + 1 ))->ItemWidth ) / 2 ; 
+		this->_maxntranslate = -1 * (((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth);
 	else
-		this->_maxntranslate =  -10000.0 ; 
+		this->_maxntranslate =  -10000.0 ; */
 	_temptranslate = this->_paneltransform->TranslateX ; 
 }
 	
@@ -86,8 +141,9 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationDelta_1(Platform::O
 {
 	float64  x , x_factor = 1.0 , _currentdelta, _currenttranslate  =  this->_paneltransform->TranslateX;
 	
-	if(this->_manipulationstate == IScrollManipulationState::Enable)
-	{
+	
+	if(this->_manipulationstate == IScrollManipulationState::Enable )
+	{ 
 		if(this->_paneltransform->TranslateX > this->_initialtranslate + 1 || this->_paneltransform->TranslateX < this->_finaltranslate - 1)
 		{ 
 			x = fmod( abs(this->_finaltranslate -  _currenttranslate), abs(this->_finaltranslate)) ;
@@ -117,14 +173,10 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationDelta_1(Platform::O
 			else
 				e->Complete(); 
 		} 
-		_currenttranslate = this->_paneltransform->TranslateX ;
-	}
-	else
-	{
-		int aaa =  0  ;
-	}
+		_currenttranslate = this->_paneltransform->TranslateX ; 
+	} 
 
-	if(_cumulative < this->_maxntranslate || _cumulative > this->_maxptranslate )
+	if(this->_paneltransform->TranslateX > this->_maxtranslate || this->_paneltransform->TranslateX < this->_mintranslate )
 	{
 		e->Complete();
 		e->Handled = true ;
@@ -134,7 +186,30 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationDelta_1(Platform::O
 	
 void  IControls::ScrollView::IScrollView::IPanel_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e)
 {
-	if(_cumulative > _maxptranslate / 2)
+	if(this->_paneltransform->TranslateX > this->_maxthreshold)
+	{
+		this->_panelanimation->To = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemPosition  ;
+		this->_panelstory->Begin();
+		this->_currentitem -= 1 ;
+	}
+	else
+	{
+		if(this->_paneltransform->TranslateX < this->_minthreshold)
+		{
+			this->_panelanimation->To = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem + 1 ))->ItemPosition  ;
+			this->_panelstory->Begin();
+			this->_currentitem += 1 ;
+		}
+		else
+		{
+			this->_panelanimation->To = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem ))->ItemPosition  ;
+			this->_panelstory->Begin();
+		}
+	}
+
+	
+
+	/**if(_cumulative > _maxptranslate / 2)
 	{
 		 float64 a0 = _temptranslate  + ( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth )/2; 
 		this->_panelanimation->To = a0;
@@ -155,8 +230,8 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationCompleted_1(Platfor
 			this->_panelstory->Begin();
 		}
 	}
-	 
-	_cumulative = 0.0; 
+	 */
+	//_cumulative = 0.0; 
 }
 	
 void  IControls::ScrollView::IScrollView::IPanel_ManipulationInertiaStarting_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e)
@@ -173,7 +248,7 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationInertiaStarting_1(P
 void IScrollView::initanimationproperties()
 {
 	Windows::Foundation::TimeSpan ts;
-	ts.Duration = 2500000 ;
+	ts.Duration = 3000000 ;
 	Windows::UI::Xaml::Duration duration(ts) ;
 
 	this->_panelstory =  ref new Windows::UI::Xaml::Media::Animation::Storyboard();
@@ -181,11 +256,59 @@ void IScrollView::initanimationproperties()
 	this->_panelanimation->Duration = duration ;
 	this->_panelstory->Children->Append(this->_panelanimation);
 	Windows::UI::Xaml::Media::Animation::CubicEase ^ ease1 = ref new Windows::UI::Xaml::Media::Animation::CubicEase();
-	ease1->EasingMode = Windows::UI::Xaml::Media::Animation::EasingMode::EaseOut ;
+	ease1->EasingMode = Windows::UI::Xaml::Media::Animation::EasingMode::EaseInOut ;
 	//this->_panelanimation->EasingFunction = ref new Windows
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(_panelanimation , "TranslateX");
 	Windows::UI::Xaml::Media::Animation::Storyboard::SetTarget(_panelanimation , _paneltransform);
+
+	this->_panelstory->Completed += ref new EventHandler<Platform::Object^>(this, &IControls::ScrollView::IScrollView::Storyboard_Completed_1);
 }
+
+void IControls::ScrollView::IScrollView::Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e)
+{
+	_cumulative = 0.0 ;
+	_counter = 0 ;
+	this->_currentchapter = ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ChapterNumber ;
+	this->_currentsection = ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->SectionNumber ;
+	this->_currentpage = ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->PageNumber ;
+}
+
+#pragma endregion
+
+
+#pragma region Scroll Load & Update
+ 
+void IScrollView::loadchapters()
+{
+	this->_numberofitems = 0 ;
+	int32 _numberofchapters = this->_chapterslist->Size ;
+	float64 _twidth = 0.0 , _cw  ;
+	for (int i = 0; i < _numberofchapters; i++)
+	{
+		for (int j = 0; j <  this->_chapterslist->GetAt(i)->Sections->Size ; j++)
+		{
+			for (int k = 0; k < this->_chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->Size ; k++)
+			{
+				this->_numberofitems += 1 ;
+				IScrollViewItem ^ _scrollitem  = ref new IScrollViewItem();
+				_scrollitem->ItemPosition = _twidth ;
+				_scrollitem->ChapterNumber =  i ;
+				_scrollitem->SectionNumber = j ;
+				_scrollitem->PageNumber = k ;
+				_cw = this->_chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->GetAt(k)->PageWidth ;
+				_scrollitem->ItemWidth = _cw ;
+				_scrollitem->ItemDataSource = this->_chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->GetAt(k); // set de pagedatasource
+				_twidth += _cw ;
+				this->_ipanel->Children->Append(_scrollitem);
+			}
+		}
+	}
+
+	this->_initialtranslate = 0.0 ;
+	this->_finaltranslate = -1 * ( _twidth - _cw ) ;
+}
+
+
 
 #pragma endregion
 
@@ -224,13 +347,12 @@ void IScrollView::tempinit()
 		this->_ipanel->Children->Append(item1);
 	}
 
-	this->_finaltranslate = -1 * ( ftranslate - _w/2 - ((IScrollViewItem^)_ipanel->Children->GetAt(9))->ItemWidth / 2  ) ;
-	this->_initialtranslate = (_w - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
-
+	//this->_finaltranslate = -1 * ( ftranslate - _w/2 - ((IScrollViewItem^)_ipanel->Children->GetAt(9))->ItemWidth / 2  ) ;
+	//this->_initialtranslate = (_w - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
 	
-	this->_paneltransform->TranslateX = (_w - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
-
-
+	this->_finaltranslate =  -1 * ( ftranslate - ((IScrollViewItem^)_ipanel->Children->GetAt(_itemslist->Size - 1))->ItemWidth ) ;
+	this->_initialtranslate = 0 ;
+	//this->_paneltransform->TranslateX = (_w - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
 	if(_currentitem > 0)
 		this->_maxptranslate = ( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth ) / 2 ; 
 	else

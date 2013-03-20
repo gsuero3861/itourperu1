@@ -29,8 +29,16 @@ TestPage::TestPage()
 	for (int i = 11; i < 33; i++)
 	{
 		_paths->Append("ms-appx:///images/mybook/Image000"+ i +".png");
-	}  
+	} 
 	loaddatasource(); 
+	//scrollview1->ItemsList = _paths ;
+	scrollview1->ScrollHeight = 900 ;
+	scrollview1->ScrollWidth = 1600 ;
+	scrollview1->ChaptersList = _chapters ;
+	scrollview1->CurrentChapter = 0 ;
+	scrollview1->CurrentSection = 1 ;
+	scrollview1->CurrentPage = 2 ;
+	
 	//stackview1->StackDataSource = _section1 ;
 
 	//stackscroll1->ScrollWidth = 1600 ;
@@ -38,9 +46,9 @@ TestPage::TestPage()
 	//stackscroll1->ChapterSource = _chapter1 ; 
 	//pagedscroll1->ChaptersList = _chapters ;
 
-	bookviewer1->BookHeight = 900 ;
-	bookviewer1->BookWidth = 1600 ;
-	bookviewer1->BookSource = _book1 ;
+	//bookviewer1->BookHeight = 900 ;
+	//bookviewer1->BookWidth = 1600 ;
+	//bookviewer1->BookSource = _book1 ;
 }
 
 /// <summary>
@@ -63,7 +71,11 @@ void TestPage::loaddatasource()
 	{
 		PageDataSource^ page1 = ref new PageDataSource();
 		page1->ThumbSource = "ms-appx:///images/tmp/thumb"+ i +".png" ;
-		page1->FullSource = "ms-appx:///images/tmp/thumb"+ i +".png" ;
+		page1->FullSource = "ms-appx:///images/tmp/large"+ i +".png" ;
+		page1->PageWidth = 1200 ;
+		if(i==1 || i == 7 )
+			page1->PageWidth = 1600 ;
+		page1->PageHeight = 900 ;
 		_pages1->Append(page1);
 	}
 	_section1->Pages = _pages1 ;
@@ -77,7 +89,11 @@ void TestPage::loaddatasource()
 	{
 		PageDataSource^ page1 = ref new PageDataSource();
 		page1->ThumbSource = "ms-appx:///images/tmp/thumb"+ i +".png" ;
-		page1->FullSource = "ms-appx:///images/tmp/thumb"+ i +".png" ;
+		page1->FullSource = "ms-appx:///images/tmp/large"+ i +".png" ;
+		page1->PageWidth = 1200 ;
+		if(i==1 || i == 7 )
+			page1->PageWidth = 1600 ;		
+		page1->PageHeight = 900 ;
 		_pages2->Append(page1);
 	}
 	_section2->Pages = _pages2 ;

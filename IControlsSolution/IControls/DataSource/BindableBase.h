@@ -3,7 +3,8 @@
 namespace IControls
 {
 	namespace DataSource
-	{
+	{ 
+
 		/// <summary>
 		/// Implementation of <see cref="INotifyPropertyChanged"/> to simplify models.
 		/// </summary>
