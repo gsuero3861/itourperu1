@@ -154,10 +154,11 @@ void IStackItem::AnimateTo(float64 _x, float64 _y ,float64 _scale)
 void IControls::StackView::IStackItem::Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e)
 {
 	this->_numberoftouches = 0 ;
-	if(this->_itemtransform->ScaleX < 1.5)
-		ZIndex = 1 ;
+	if(this->_itemtransform->ScaleX > 1.5)
+		StackItemFullScreenAnimationCompleted(this , this->_itemnumber);
 	else
-		StackItemFullScreenAnimationCompleted(this);
+		ZIndex = 1 ;
+		
 }
 
 void IStackItem::inititemanimationstory()

@@ -37,7 +37,7 @@ MainPage::MainPage()
 	stack1->ItemHeight = 300 ;
 	stack1->ItemWidth = 460 ;
 	stack1->StackWidth = 800 ;
-	stack1->ItemsList = _paths ;	
+	stack1->ItemsList = _paths ;		
 	/** to test stackscroll1
 	Grid ^ a = ref new Grid();
 	a->Background = ref new SolidColorBrush(Windows::UI::Colors::Aqua);

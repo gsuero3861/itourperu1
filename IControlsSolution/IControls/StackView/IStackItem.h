@@ -6,7 +6,7 @@ namespace IControls
 	{
 		public delegate void StackItemSelectedEventHandler(Platform::Object ^ sender , int32 _currentitem);
 		public delegate void StackItemTappedEventHandler(Platform::Object ^ sender , int32 _currentitem);
-		public delegate void StackItemFullScreenAnimationCompletedEventHandler(Platform::Object ^ sender );
+		public delegate void StackItemFullScreenAnimationCompletedEventHandler(Platform::Object ^ sender, int32 _item );
 
 		[Windows::Foundation::Metadata::WebHostHidden]
 		public ref class IStackItem sealed : public Windows::UI::Xaml::Controls::Grid 

@@ -8,6 +8,7 @@
 
 using namespace IControls;
 using namespace IControls::DataSource ;
+using namespace IControls::ScrollView ;
 
 using namespace Platform;
 using namespace Windows::Foundation;
@@ -32,12 +33,13 @@ TestPage::TestPage()
 	} 
 	loaddatasource(); 
 	//scrollview1->ItemsList = _paths ;
-	scrollview1->ScrollHeight = 900 ;
+	/** scrollview1->ScrollHeight = 900 ;
 	scrollview1->ScrollWidth = 1600 ;
 	scrollview1->ChaptersList = _chapters ;
 	scrollview1->CurrentChapter = 0 ;
 	scrollview1->CurrentSection = 1 ;
 	scrollview1->CurrentPage = 2 ;
+	 */
 	
 	//stackview1->StackDataSource = _section1 ;
 
@@ -46,9 +48,15 @@ TestPage::TestPage()
 	//stackscroll1->ChapterSource = _chapter1 ; 
 	//pagedscroll1->ChaptersList = _chapters ;
 
-	//bookviewer1->BookHeight = 900 ;
-	//bookviewer1->BookWidth = 1600 ;
-	//bookviewer1->BookSource = _book1 ;
+	bookviewer1->BookHeight = 900 ;
+	bookviewer1->BookWidth = 1600 ;
+	bookviewer1->BookSource = _book1 ;
+
+	/**
+	animationview1->ItemHeight = 900 ;
+	animationview1->ItemWidth = 1600 ;
+	animationview1->AnimationSource = _section1 ;
+	animationview1->SetOutAnimation(1);*/
 }
 
 /// <summary>
@@ -67,13 +75,13 @@ void TestPage::loaddatasource()
 	_section1 = ref new SectionDataSource();
 	_section1->Title = "Section1" ;
 	Platform::Collections::Vector<PageDataSource^>^ _pages1 =  ref new Platform::Collections::Vector<PageDataSource^> () ;
-	for (int i = 1; i <= 7; i++)
+	for (int i = 1; i <= 6; i++)
 	{
 		PageDataSource^ page1 = ref new PageDataSource();
 		page1->ThumbSource = "ms-appx:///images/tmp/thumb"+ i +".png" ;
 		page1->FullSource = "ms-appx:///images/tmp/large"+ i +".png" ;
 		page1->PageWidth = 1200 ;
-		if(i==1 || i == 7 )
+		if(i==1 || i == 6 )
 			page1->PageWidth = 1600 ;
 		page1->PageHeight = 900 ;
 		_pages1->Append(page1);

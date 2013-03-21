@@ -41,6 +41,17 @@ void IControls::PagedScrollItem::StackScroll_UnlockParent(Platform::Object^ send
 	this->PagedScrollItemUnlockParent(this, _item);
 }
 
+
+void IControls::PagedScrollItem::StackScroll_OutAnimationStarted(Platform::Object^ sender,  int32 _section, int32 _page)
+{
+	PagedScrollItemAnimationOutStarted( this , _section , _page ) ;
+}
+	
+void IControls::PagedScrollItem::StackScroll_OutAnimationCompleted(Platform::Object^ sender,  int32 _section, int32 _page)
+{
+	PagedScrollItemAnimationOutCompleted( this , _section , _page ) ;
+}
+
 #pragma endregion
 
 
@@ -48,13 +59,14 @@ void IControls::PagedScrollItem::StackScroll_UnlockParent(Platform::Object^ send
 
 void PagedScrollItem::loadchapter()
 {
-	_stackscroll  = ref new IStackScroll();
-	//_stackscroll->ItemsList =  this->_itemslist ;
+	_stackscroll  = ref new IStackScroll(); 
 	_stackscroll->ChapterSource = _datasource ;
 	_stackscroll->ScrollHeight = 900 ;
 	_stackscroll->ScrollWidth = 1600 ;
 	_stackscroll->StackScrollLockParent +=  ref new StackScrollLockParentEventHandler(this, &IControls::PagedScrollItem::StackScroll_LockParent);
 	_stackscroll->StackScrollUnlockParent +=  ref new StackScrollUnlockParentEventHandler(this, &IControls::PagedScrollItem::StackScroll_UnlockParent);
+	_stackscroll->StackScrollOutAnimationStarted += ref new StackScrollOutAnimationStartedEventHandler(this, &IControls::PagedScrollItem::StackScroll_OutAnimationStarted);
+	_stackscroll->StackScrollOutAnimationCompleted += ref new StackScrollOutAnimationCompletedEventHandler(this, &IControls::PagedScrollItem::StackScroll_OutAnimationCompleted);
 	this->_stackscrollgrid->Children->Append(_stackscroll);
 	 
 }

@@ -79,6 +79,7 @@ void IStackView::loadatsource()
 		titem->ItemContent = tgrid ;
 		titem->StackItemSelected += ref new StackItemSelectedEventHandler(this, &IControls::StackView::IStackView::StackItemSelected_1);
 		titem->StackItemTapped +=  ref new StackItemTappedEventHandler(this, &IControls::StackView::IStackView::StackItem_Tapped);
+		titem->StackItemFullScreenAnimationCompleted += ref new StackItemFullScreenAnimationCompletedEventHandler(this, &IControls::StackView::IStackView::StackItem_FullScreenAnimationCompleted);
 		this->_itemsgrid->Children->Append(titem);
 	}
 }
@@ -87,7 +88,7 @@ void IStackView::loadatsource()
 
 #pragma region Load of Data
 
-//temp load of data
+//temp load of data DON'T WORK
 void IStackView::loaditems()
 {
 	this->_numberofitems = this->_itemslist->Size ;
@@ -111,6 +112,7 @@ void IStackView::loaditems()
 		titem->ItemContent = tgrid ;
 		titem->StackItemSelected += ref new StackItemSelectedEventHandler(this, &IControls::StackView::IStackView::StackItemSelected_1);
 		titem->StackItemTapped +=  ref new StackItemTappedEventHandler(this, &IControls::StackView::IStackView::StackItem_Tapped);
+		titem->StackItemFullScreenAnimationCompleted += ref new StackItemFullScreenAnimationCompletedEventHandler(this, &IControls::StackView::IStackView::StackItem_FullScreenAnimationCompleted);
 		this->_itemsgrid->Children->Append(titem);
 	}
 }
@@ -244,7 +246,7 @@ void IStackView::initanimationproperties()
 
 #pragma region Event Handlers Functions
 
-void IControls::StackView::IStackView::StackItem_FullScreenAnimationCompleted(Platform::Object ^ sender )
+void IControls::StackView::IStackView::StackItem_FullScreenAnimationCompleted(Platform::Object ^ sender , int32 _item  )
 {
 	///Animation completed event
 	StackViewFullScreenAnimationCompleted(this, this->_stacknumber, this->_selecteditem);

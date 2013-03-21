@@ -247,7 +247,7 @@ namespace IControls
 
 			void StackItemSelected_1(Platform::Object ^ sender , int32 _currentitem);
 			void StackItem_Tapped(Platform::Object ^ sender , int32 _currentitem);
-			void StackItem_FullScreenAnimationCompleted(Platform::Object ^ sender );
+			void StackItem_FullScreenAnimationCompleted(Platform::Object ^ sender , int32 _item );
 
 			void Storyboard_Completed_1(Platform::Object^ sender, Platform::Object^ e);
 #pragma endregion

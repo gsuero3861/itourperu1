@@ -388,11 +388,13 @@ void IStackScroll::initpointerfunctions()
 ///Stackanimation Started
 void IControls::IStackScroll::StackView_FullScreenAnimationStarted(Platform::Object^ sender, int32 _stacknumber,int32 _itemnumber)
 {
+	StackScrollOutAnimationStarted(this,_stacknumber,_itemnumber) ;
 }
 	
 //Stackanimation Completed
 void IControls::IStackScroll::StackView_FullScreenAnimationCompleted(Platform::Object^ sender, int32 _stacknumber,int32 _itemnumber)
 {
+	StackScrollOutAnimationCompleted(this,_stacknumber,_itemnumber) ;
 }
 
 #pragma endregion

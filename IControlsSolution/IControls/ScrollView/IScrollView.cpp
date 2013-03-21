@@ -54,6 +54,31 @@ void IScrollView::initIscrollcontrols()
 #pragma endregion
 
 #pragma region Private Methods
+
+void IScrollView::setpage()
+{
+	int32 tmpcounter = 0 ;
+	bool flag = false ;
+	for (int i = 0; i < this->_chapterslist->Size ; i++)
+	{
+		for (int j = 0; j < this->_chapterslist->GetAt(i)->Sections->Size ; j++)
+		{
+			if(this->_currentitem + 1 > tmpcounter + this->_chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->Size )
+			{
+				tmpcounter += this->_chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->Size ;
+			}
+			else
+			{
+				this->_currentchapter = i ;
+				this->_currentsection = j ;
+				this->_currentpage = this->_currentitem - tmpcounter ;
+				flag = true ;
+				break ;
+			}
+		}
+		if(flag) break ;
+	}
+}
  
 void IScrollView::setscroll()
 {
@@ -75,21 +100,31 @@ void IScrollView::setscroll()
 	
 }
 
-void IControls::ScrollView::IScrollView::IScroll_ItemLockParent(Platform::Object^ sender,  int32 _item)
+void IControls::ScrollView::IScrollView::IScrollItem_LockParent(Platform::Object^ sender,  int32 _item)
 {
 	this->_manipulationstate =  IScrollManipulationState::Dislable ;
+	IScrollViewLockParent(this, _currentitem ) ;
 }
 
-void IControls::ScrollView::IScrollView::IScroll_ItemUnlockParent(Platform::Object^ sender,  int32 _item)
+void IControls::ScrollView::IScrollView::IScrollItem_UnlockParent(Platform::Object^ sender,  int32 _item)
 {
-	this->_manipulationstate =  IScrollManipulationState::Enable ;
+	if(this->_pointerscounter < 2)
+		this->_manipulationstate =  IScrollManipulationState::Enable ;
 }
 
 void  IControls::ScrollView::IScrollView::IPanel_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
-{}
+{
+	_pointerscounter += 1 ;
+	if(this->_pointerscounter > 1 )
+	{ 
+		IScrollViewUnlockParent(this, _currentitem ) ;
+	}
+}
 	
 void IControls::ScrollView::IScrollView::IPanel_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
-{}
+{
+	_pointerscounter -= 1 ;
+}
 	
 void  IControls::ScrollView::IScrollView::IPanel_ManipulationStarted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationStartedRoutedEventArgs^ e)
 { 
@@ -100,8 +135,7 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationStarted_1(Platform:
 		e->Complete();
 		e->Handled =  true ;
 		return ;
-	}
-	
+	} 
 	if(_currentitem > 0 )
 	{
 		this->_maxtranslate = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemPosition ;
@@ -122,8 +156,7 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationStarted_1(Platform:
 		this->_mintranslate = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_numberofitems - 1 ))->ItemPosition - this->_scrollwidth / 2 ;
 		this->_minthreshold = this->_finaltranslate - this->_scrollwidth ; 
 	}
-
-
+	 
 	/*
 	if(_currentitem > 0)//( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth ) / 2 ; 
 		this->_maxptranslate = ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth  ;
@@ -139,10 +172,8 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationStarted_1(Platform:
 	
 void  IControls::ScrollView::IScrollView::IPanel_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e)
 {
-	float64  x , x_factor = 1.0 , _currentdelta, _currenttranslate  =  this->_paneltransform->TranslateX;
-	
-	
-	if(this->_manipulationstate == IScrollManipulationState::Enable )
+	float64  x , x_factor = 1.0 , _currentdelta, _currenttranslate  =  this->_paneltransform->TranslateX; 
+	if(this->_manipulationstate == IScrollManipulationState::Enable && _pointerscounter < 2	 )
 	{ 
 		if(this->_paneltransform->TranslateX > this->_initialtranslate + 1 || this->_paneltransform->TranslateX < this->_finaltranslate - 1)
 		{ 
@@ -154,12 +185,9 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationDelta_1(Platform::O
 		{
 			x_factor = 1.0 ;
 			_currentdelta = e->Delta.Translation.X ;
-			x=1.0 ;
-
-		} 
-
-		this->_cumulative += e->Delta.Translation.X ;
-
+			x=1.0 ; 
+		}  
+		this->_cumulative += e->Delta.Translation.X ; 
 		if(!e->IsInertial)
 		{
 			this->_paneltransform->TranslateX += (e->Delta.Translation.X * x_factor); ///_currentdelta ; 
@@ -191,6 +219,8 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationCompleted_1(Platfor
 		this->_panelanimation->To = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemPosition  ;
 		this->_panelstory->Begin();
 		this->_currentitem -= 1 ;
+		IScrollViewItemChanged(this, this->_currentitem);
+		setpage();
 	}
 	else
 	{
@@ -199,6 +229,8 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationCompleted_1(Platfor
 			this->_panelanimation->To = -1 * ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem + 1 ))->ItemPosition  ;
 			this->_panelstory->Begin();
 			this->_currentitem += 1 ;
+			IScrollViewItemChanged(this, this->_currentitem);
+			setpage();
 		}
 		else
 		{
@@ -206,38 +238,12 @@ void  IControls::ScrollView::IScrollView::IPanel_ManipulationCompleted_1(Platfor
 			this->_panelstory->Begin();
 		}
 	}
-
-	
-
-	/**if(_cumulative > _maxptranslate / 2)
-	{
-		 float64 a0 = _temptranslate  + ( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth )/2; 
-		this->_panelanimation->To = a0;
-		this->_panelstory->Begin();
-		_currentitem -= 1 ;
-	}
-	else
-	{
-		if(_cumulative < _maxntranslate / 2)
-		{
-			this->_panelanimation->To = _temptranslate - ( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem + 1 ))->ItemWidth )/2 ;
-			this->_panelstory->Begin();
-			_currentitem += 1 ;
-		}
-		else
-		{
-			this->_panelanimation->To = _temptranslate  ;
-			this->_panelstory->Begin();
-		}
-	}
-	 */
-	//_cumulative = 0.0; 
 }
 	
 void  IControls::ScrollView::IScrollView::IPanel_ManipulationInertiaStarting_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e)
 { 
-	//if(this->_manipulationstate == IScrollManipulationState::Enable)
-		//e->TranslationBehavior->DesiredDeceleration = 10.0 * 96.0 / (1000.0 * 1000.0);
+	 //if(this->_manipulationstate == IScrollManipulationState::Enable)
+		// e->TranslationBehavior->DesiredDeceleration = 5.0 * 96.0 / (1000.0 * 1000.0);
 }
  
 #pragma endregion
@@ -290,16 +296,18 @@ void IScrollView::loadchapters()
 			for (int k = 0; k < this->_chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->Size ; k++)
 			{
 				this->_numberofitems += 1 ;
-				IScrollViewItem ^ _scrollitem  = ref new IScrollViewItem();
-				_scrollitem->ItemPosition = _twidth ;
-				_scrollitem->ChapterNumber =  i ;
-				_scrollitem->SectionNumber = j ;
-				_scrollitem->PageNumber = k ;
+				IScrollViewItem ^ scrollitem  = ref new IScrollViewItem();
+				scrollitem->IScrollViewItemLockParent += ref new IScrollViewItemLockParentEventHandler(this, &IControls::ScrollView::IScrollView::IScrollItem_LockParent);
+				scrollitem->IScrollViewItemUnlockParent += ref new IScrollViewItemUnlockParentEventHandler(this, &IControls::ScrollView::IScrollView::IScrollItem_UnlockParent);
+				scrollitem->ItemPosition = _twidth ;
+				scrollitem->ChapterNumber =  i ;
+				scrollitem->SectionNumber = j ;
+				scrollitem->PageNumber = k ;
 				_cw = this->_chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->GetAt(k)->PageWidth ;
-				_scrollitem->ItemWidth = _cw ;
-				_scrollitem->ItemDataSource = this->_chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->GetAt(k); // set de pagedatasource
+				scrollitem->ItemWidth = _cw ;
+				scrollitem->ItemDataSource = this->_chapterslist->GetAt(i)->Sections->GetAt(j)->Pages->GetAt(k); // set de pagedatasource
 				_twidth += _cw ;
-				this->_ipanel->Children->Append(_scrollitem);
+				this->_ipanel->Children->Append(scrollitem);
 			}
 		}
 	}
@@ -313,58 +321,4 @@ void IScrollView::loadchapters()
 #pragma endregion
 
 
-#pragma region  DataLoad Temp
-
-
-void IScrollView::tempinit()
-{
-	float64 _h = 900 ;
-	float64 _w = 1600 ;
-	this->_scrollheight = _h ;
-	this->_scrollwidth = _w ;
-	this->_currentitem = 0 ;
-	this->_numberofitems = _itemslist->Size ;
-	
-	float64 ftranslate = 0.0 ;
-
-	for (int i = 0; i < _itemslist->Size; i++)
-	{
-		IScrollViewItem ^ item1  = ref new IScrollViewItem();
-		item1->Height = _h ;
-		item1->ItemWidth = 1200 ;
-		/**if(i==1 || i==5 || i==9)
-			item1->ItemWidth = 1600 ;
-		else
-			item1->ItemWidth = 1200 ;
-
-		if(i%2 > 0)
-			item1->Background = ref new SolidColorBrush(Windows::UI::Colors::Azure);
-		else
-			item1->Background = ref new SolidColorBrush(Windows::UI::Colors::GreenYellow);*/
-		ftranslate += item1->ItemWidth ;
-
-		item1->Source = _itemslist->GetAt(i);
-		this->_ipanel->Children->Append(item1);
-	}
-
-	//this->_finaltranslate = -1 * ( ftranslate - _w/2 - ((IScrollViewItem^)_ipanel->Children->GetAt(9))->ItemWidth / 2  ) ;
-	//this->_initialtranslate = (_w - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
-	
-	this->_finaltranslate =  -1 * ( ftranslate - ((IScrollViewItem^)_ipanel->Children->GetAt(_itemslist->Size - 1))->ItemWidth ) ;
-	this->_initialtranslate = 0 ;
-	//this->_paneltransform->TranslateX = (_w - ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth ) / 2 ;
-	if(_currentitem > 0)
-		this->_maxptranslate = ( ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem - 1 ))->ItemWidth ) / 2 ; 
-	else
-		this->_maxptranslate =  10000.0 ;
-
-	if(_currentitem < this->_numberofitems - 1 )
-		this->_maxntranslate = -1 * (((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem))->ItemWidth + ((IScrollViewItem^)_ipanel->Children->GetAt(_currentitem + 1 ))->ItemWidth ) / 2 ; 
-	else
-		this->_maxntranslate =  -10000.0 ; 
-	_temptranslate = this->_paneltransform->TranslateX ;
-	 
  
-}
-
-#pragma endregion

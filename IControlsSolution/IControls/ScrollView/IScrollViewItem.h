@@ -4,10 +4,16 @@ namespace IControls
 {
 	namespace ScrollView
 	{
+
+		public delegate void IScrollViewItemLockParentEventHandler(Platform::Object^ sender, int32 item);
+		public delegate void IScrollViewItemUnlockParentEventHandler(Platform::Object^ sender, int32 item);
+
 		public ref class IScrollViewItem sealed : public Windows::UI::Xaml::Controls::Grid
 		{
 		public:
 			IScrollViewItem();
+			event IScrollViewItemLockParentEventHandler^ IScrollViewItemLockParent ;
+			event IScrollViewItemUnlockParentEventHandler^ IScrollViewItemUnlockParent ;
 
 #pragma region Public Properties
 

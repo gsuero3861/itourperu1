@@ -18,6 +18,9 @@ namespace IControls
 	public delegate void StackScrollLockParentEventHandler(Platform::Object^ sender,  int32 _item);
 	public delegate void StackScrollUnlockParentEventHandler(Platform::Object^ sender,  int32 _item);
 
+	public delegate void StackScrollOutAnimationStartedEventHandler(Platform::Object^ sender,  int32 _section, int32 _page);
+	public delegate void StackScrollOutAnimationCompletedEventHandler(Platform::Object^ sender,  int32 _section, int32 _page);
+
 	public ref class IStackScroll sealed : Windows::UI::Xaml::Controls::Grid
 	{
 	public :
@@ -28,6 +31,8 @@ namespace IControls
 		event StackScrollLockParentEventHandler^ StackScrollLockParent ;
 		event StackScrollUnlockParentEventHandler^ StackScrollUnlockParent ;
 
+		event StackScrollOutAnimationStartedEventHandler^ StackScrollOutAnimationStarted ;
+		event StackScrollOutAnimationCompletedEventHandler ^ StackScrollOutAnimationCompleted ;
 
 #pragma region Stack Scroll 
 

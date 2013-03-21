@@ -6,10 +6,16 @@ namespace IControls
 	public enum class PagedScrollManipulationState
 	{  Enable, Dislable };
 
+
+	public delegate void PagedScrollAnimationOutStartedEventHandler(Platform::Object^ sender);
+	public delegate void PagedScrollAnimationOutCompletedEventHandler(Platform::Object^ sender);
+
 	public ref class PagedScroll sealed : public Windows::UI::Xaml::Controls::Grid
 	{
 	public:
 			PagedScroll();
+			event PagedScrollAnimationOutStartedEventHandler^ PagedScrollAnimationOutStarted ;
+			event PagedScrollAnimationOutCompletedEventHandler^ PagedScrollAnimationOutCompleted ;
 
 #pragma region Controls
 
@@ -41,7 +47,25 @@ namespace IControls
 			void set(int32 value){ this->_currentitem =  value ;}
 			int32 get(){return this->_currentitem ;}
 		}
+
+		property int32 CurrentChapter
+		{
+			void set(int32 value){ this->_currentchapter =  value ;}
+			int32 get(){return this->_currentchapter ;}
+		}
+
+		property int32 CurrentSection
+		{
+			void set(int32 value){ this->_currentsection =  value ;}
+			int32 get(){return this->_currentsection ;}
+		}
 		
+		property int32 CurrentPage
+		{
+			void set(int32 value){ this->_currentpage =  value ;}
+			int32 get(){return this->_currentpage ; }
+		}
+
 		property Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ ChaptersList
 		{
 			void set( Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ value)
@@ -55,7 +79,7 @@ namespace IControls
 	private:
 		Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ _datasource ;
 		float64 _scrollwidth, _scrollheight ;
-		int32 _currentitem ;
+		int32 _currentitem, _currentchapter, _currentsection, _currentpage ;
 
 #pragma endregion
 
@@ -73,6 +97,8 @@ namespace IControls
 		 
 		void PagedScroll_ItemLockParent(Platform::Object^ sender,  int32 _item);
 		void PagedScroll_ItemUnlockParent(Platform::Object^ sender,  int32 _item);
+		void PagedScrollItem_AnimationOutStarted(Platform::Object^ sender,  int32 _section, int32 _page);
+		void PagedScrollItem_AnimationOutCompleted(Platform::Object^ sender,  int32 _section, int32 _page);
 
 		void PagedPanel_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 		void PagedPanel_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);

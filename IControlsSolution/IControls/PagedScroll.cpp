@@ -64,6 +64,22 @@ void IControls::PagedScroll::PagedScroll_ItemUnlockParent(Platform::Object^ send
 	this->_manipulationstate =  PagedScrollManipulationState::Enable ;
 }
 
+void IControls::PagedScroll::PagedScrollItem_AnimationOutStarted(Platform::Object^ sender,  int32 _section, int32 _page)
+{
+	this->_currentpage = _page ;
+	this->_currentsection = _section ;
+	PagedScrollAnimationOutStarted(this);
+}
+	
+void IControls::PagedScroll::PagedScrollItem_AnimationOutCompleted(Platform::Object^ sender,  int32 _section, int32 _page)
+{
+	this->_currentpage = _page ;
+	this->_currentsection = _section ;
+	PagedScrollAnimationOutCompleted(this);
+}
+
+
+
 void  IControls::PagedScroll::PagedPanel_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {}
 	
@@ -126,6 +142,7 @@ void  IControls::PagedScroll::PagedPanel_ManipulationCompleted_1(Platform::Objec
 		this->_currentitem = (int32)floor((abs(this->_paneltransform->TranslateX) + this->_scrollwidth / 2 ) / this->_scrollwidth ) ;
 		this->_panelanimation->To = -1 * this->_scrollwidth * this->_currentitem ;
 		this->_panelstory->Begin();
+		this->_currentchapter = this->_currentitem ;
 	///}
 	 
 	this->_manipulationstate = PagedScrollManipulationState::Dislable ;
@@ -182,6 +199,8 @@ void PagedScroll::temploaddata()
 		item1->Background =  ref new SolidColorBrush(Windows::UI::Colors::Azure);
 		item1->PagedScrollItemLockParent +=  ref new PagedScrollItemLockParentEventHandler(this, &IControls::PagedScroll::PagedScroll_ItemLockParent);
 		item1->PagedScrollItemUnlockParent +=  ref new PagedScrollItemUnlockParentEventHandler(this, &IControls::PagedScroll::PagedScroll_ItemUnlockParent);
+		item1->PagedScrollItemAnimationOutStarted +=  ref new PagedScrollItemAnimationOutStartedEventHandler(this, &IControls::PagedScroll::PagedScrollItem_AnimationOutStarted);
+		item1->PagedScrollItemAnimationOutCompleted +=  ref new PagedScrollItemAnimationOutCompletedEventHandler(this, &IControls::PagedScroll::PagedScrollItem_AnimationOutCompleted);
 		this->_pagedpanel->Children->Append(item1);
 	}
 

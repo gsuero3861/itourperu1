@@ -5,6 +5,10 @@ namespace IControls
 	namespace  ScrollView
 	{
 
+		public delegate void IScrollViewLockParentEventHandler(Platform::Object^ sender, int32 item);
+		public delegate void IScrollViewUnlockParentEventHandler(Platform::Object^ sender, int32 item);
+		public delegate void IScrollViewItemChangedEventHandler(Platform::Object^ sender, int32 item);
+
 		public enum class IScrollManipulationState
 		{  Enable, Dislable };
 
@@ -12,6 +16,9 @@ namespace IControls
 		{
 		public:
 				IScrollView();
+				event IScrollViewLockParentEventHandler^ IScrollViewLockParent ;
+				event IScrollViewUnlockParentEventHandler^ IScrollViewUnlockParent ;
+				event IScrollViewItemChangedEventHandler^ IScrollViewItemChanged ;
 
 #pragma region Controls
 
@@ -64,7 +71,7 @@ namespace IControls
 			float64 _maxtranslate , _mintranslate , _maxthreshold , _minthreshold ; //_max : -1 min: +1 threshold is for animation
  
 			float64 _cumulative, _maxcumulative , _maxptranslate , _maxntranslate , _temptranslate ;
-			int32 _counter ;
+			int32 _counter, _pointerscounter ;
 
 #pragma endregion
 
@@ -72,9 +79,10 @@ namespace IControls
 		private: 
 
 			void setscroll();
+			void setpage();
 		 
-			void IScroll_ItemLockParent(Platform::Object^ sender,  int32 _item);
-			void IScroll_ItemUnlockParent(Platform::Object^ sender,  int32 _item);
+			void IScrollItem_LockParent(Platform::Object^ sender,  int32 _item);
+			void IScrollItem_UnlockParent(Platform::Object^ sender,  int32 _item);
 
 			void IPanel_PointerPressed_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 			void IPanel_PointerReleased_1(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
@@ -140,29 +148,10 @@ namespace IControls
 			Windows::Foundation::Collections::IVector<DataSource::ChapterDataSource^>^ _chapterslist;
 			int32 _currentchapter, _currentsection , _currentpage ;
 			void loadchapters();
+			
 
 #pragma endregion
-
-#pragma region DataLoad Temp
-		public:
-			property Windows::Foundation::Collections::IVector<Platform::String^>^ ItemsList
-			{
-				void set(Windows::Foundation::Collections::IVector<Platform::String^>^ value)
-				{
-					this->_itemslist = value ; 
-					tempinit();
-				}
-				Windows::Foundation::Collections::IVector<Platform::String^>^ get(){ return this->_itemslist ; }
-			}
-
-		private :
-			 Windows::Foundation::Collections::IVector<Platform::String^>^ _itemslist;
-			void tempinit();
-
-#pragma endregion
-
-
-
+  
 		};
 
 	}

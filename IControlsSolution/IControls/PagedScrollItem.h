@@ -6,6 +6,9 @@ namespace IControls
 	public delegate void PagedScrollItemLockParentEventHandler(Platform::Object^ sender,  int32 _item);
 	public delegate void PagedScrollItemUnlockParentEventHandler(Platform::Object^ sender,  int32 _item);
 
+	public delegate void PagedScrollItemAnimationOutStartedEventHandler(Platform::Object^ sender,  int32 _section, int32 _page);
+	public delegate void PagedScrollItemAnimationOutCompletedEventHandler(Platform::Object^ sender,  int32 _section, int32 _page);
+
 
 	public ref class PagedScrollItem sealed : public Windows::UI::Xaml::Controls::Grid
 	{
@@ -13,6 +16,9 @@ namespace IControls
 		PagedScrollItem();
 		event PagedScrollItemLockParentEventHandler ^ PagedScrollItemLockParent ;
 		event PagedScrollItemUnlockParentEventHandler ^ PagedScrollItemUnlockParent ;
+
+		event PagedScrollItemAnimationOutStartedEventHandler ^ PagedScrollItemAnimationOutStarted ;
+		event PagedScrollItemAnimationOutCompletedEventHandler ^ PagedScrollItemAnimationOutCompleted ;
 
 #pragma region Controls
 	private:
@@ -73,6 +79,8 @@ namespace IControls
 	private:
 		void StackScroll_LockParent(Platform::Object^ sender,  int32 _item);
 		void StackScroll_UnlockParent(Platform::Object^ sender,  int32 _item);
+		void StackScroll_OutAnimationStarted(Platform::Object^ sender,  int32 _section, int32 _page);
+		void StackScroll_OutAnimationCompleted(Platform::Object^ sender,  int32 _section, int32 _page);
 
 #pragma endregion
 

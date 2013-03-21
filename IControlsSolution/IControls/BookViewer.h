@@ -67,11 +67,11 @@ namespace IControls
 
 #pragma region Controls
 
-	private:
-		PagedScroll ^ _pagedchapters ;
-		Windows::UI::Xaml::Controls::StackPanel ^ _animationpanel ;
-		///ScrollViewer
-
+	private: 
+		Windows::UI::Xaml::Controls::Grid ^ _fullscrollgrid ;
+		PagedScroll ^ _pagedchapters ; 
+		AnimationView ^ _animationview ;
+		ScrollView::IScrollView ^ _fullpagescroll ;
 		
 #pragma endregion
  
@@ -82,6 +82,35 @@ namespace IControls
 		void setcurrentpage(int32 _chapter, int32 _section, int32 _page );
 		void initcontrols();
 		void loaddata();
+
+		void setanimationview();
+
+#pragma endregion
+ 
+
+#pragma region Private Properties
+
+	private:
+
+		bool _manipulationfullgridenable ;
+
+#pragma endregion
+
+#pragma region Events Methods
+
+	private:
+		void PagedScroll_AnimationOutStarted(Platform::Object^ sender);
+		void PagedScroll_AnimationOutCompleted(Platform::Object^ sender);
+
+		void AnimationViewCompleted(Platform::Object ^ sender );
+
+		void FullGrid_ManipulationDelta_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
+		void FullGrid_ManipulationCompleted_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e);
+		void FullGrid_ManipulationInertiaStarting_1(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationInertiaStartingRoutedEventArgs^ e);
+		
+		void IScrollView_LockParent(Platform::Object^ sender, int32 item);
+		void IScrollView_UnlockParent(Platform::Object^ sender, int32 item);
+		void IScrollView_ItemChanged(Platform::Object^ sender, int32 item);
 
 #pragma endregion
 
